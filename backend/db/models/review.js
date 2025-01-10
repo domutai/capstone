@@ -59,8 +59,8 @@ module.exports = (sequelize) => {
       sequelize,
       modelName: 'Review',
       tableName: 'Reviews',
-      schema: 'public',
-      timestamps: true,
+      //schema: 'public',
+     // timestamps: true,
       createdAt: 'createdAt',
       updatedAt: 'updatedAt',
     }
