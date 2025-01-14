@@ -1,78 +1,29 @@
-//DEVELOPMENT
+//BOOKINGS DEVELOPMENT
 
 const { Model, DataTypes } = require('sequelize');
 
-module.exports = (sequelize) => {
-  class Booking extends Model {}
-
-  Booking.init(
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-      },
-      userId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Users',
-          key: 'id',
-        },
-        onDelete: 'CASCADE',
-      },
-      spotId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'Spots',
-          key: 'id',
-        },
-        onDelete: 'CASCADE',
-      },
-      startDate: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-      },
-      endDate: {
-        type: DataTypes.DATEONLY,
-        allowNull: false,
-      },
-      createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-      },
-      updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW,
-      },
+module.exports = (sequelize, DataTypes) => {
+  const Booking = sequelize.define('Booking', {
+    booking_date: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
     },
-    {
-      sequelize,
-      modelName: 'Booking',
-      tableName: 'Bookings',
-      //schema: 'public',
-      timestamps: true,
-      createdAt: 'createdAt',
-      updatedAt: 'updatedAt',
-    }
-  );
+    booking_time: {
+      type: DataTypes.TIME,
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM('pending', 'confirmed', 'canceled'),
+      defaultValue: 'pending',
+    },
+  }, {
+    tableName: 'Bookings',
+    timestamps: true,
+  });
 
   Booking.associate = (models) => {
-    Booking.belongsTo(models.User, {
-      foreignKey: 'userId',
-      as: 'user',
-      onDelete: 'CASCADE',
-    });
-
-    Booking.belongsTo(models.Spot, {
-      foreignKey: 'spotId',
-      as: 'spot',
-      onDelete: 'CASCADE',
-    });
+    Booking.belongsTo(models.User, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+    Booking.belongsTo(models.Table, { foreignKey: 'table_id', onDelete: 'CASCADE' });
   };
 
   return Booking;

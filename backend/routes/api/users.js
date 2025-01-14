@@ -14,14 +14,6 @@ const validateSignup = [
       .exists({ checkFalsy: true })
       .isEmail()
       .withMessage('Invalid email' /*'Please provide a valid email.'*/),
-    check('username')
-      .exists({ checkFalsy: true })
-      .isLength({ min: 4 })
-      .withMessage('Username is required'/*'Please provide a username with at least 4 characters.'*/),
-    check('username')
-      .not()
-      .isEmail()
-      .withMessage('Username cannot be an email.'),
     check('password')
       .exists({ checkFalsy: true })
       .isLength({ min: 6 })
@@ -39,17 +31,15 @@ router.post(
     '/',
     validateSignup,
     async (req, res) => {
-      const { email, password, username, firstName, lastName } = req.body;
+      const { email, password, firstName, lastName } = req.body;
 
       const existingUserByEmail = await User.findOne({ where: { email } });
-      const existingUserByUsername = await User.findOne({ where: { username } });
 
-      if (existingUserByEmail || existingUserByUsername) {
+      if (existingUserByEmail) {
         return res.status(400).json({
           message: 'User already exists',
           errors: {
             email: existingUserByEmail ? 'User with that email already exists' : null,
-            username: existingUserByUsername ? 'User with that username already exists' : null
           }
         });
       }
@@ -57,7 +47,7 @@ router.post(
       const hashedPassword = bcrypt.hashSync(password);
 
       const user = await User.create({ 
-        email, username, hashedPassword, firstName, lastName
+        email, hashedPassword, firstName, lastName
      });
   
       const safeUser = {
@@ -65,7 +55,6 @@ router.post(
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        username: user.username,
       };
   
       await setTokenCookie(res, safeUser);
@@ -85,7 +74,7 @@ router.post(
       if (loggedInUser && loggedInUser.id === parseInt(userId)) {
         const user = await User.findByPk(userId, {
           attributes: 
-            ['id', 'firstName', 'lastName', 'email', 'username']
+            ['id', 'firstName', 'lastName', 'email']
       });
   
         if (!user) {
@@ -97,7 +86,6 @@ router.post(
           firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
-          username: user.username,
         };
   
         return res.status(200).json({ user: safeUser });

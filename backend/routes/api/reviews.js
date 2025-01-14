@@ -1,355 +1,126 @@
 const express = require('express');
-const { Spot, User, Review, ReviewImage } = require('../../db/models');
-const { requireAuth, restoreUser } = require('../../utils/auth'); 
+const { Review, Club, User } = require('../../db/models'); 
 const router = express.Router();
 
-const { check } = require('express-validator');
-const { handleValidationErrors } = require('../../utils/validation');  
-
-const moment = require('moment');
-
-router.use(restoreUser);
-
-
-// GET ALL REVIEWS BY CURRENT USER (MOCHA: changed endpoint to /current)
-router.get('/current', requireAuth, async (req, res) => {
-  const userId = req.user.id;
+// Middleware to check if the user owns a review
+const isReviewOwner = async (req, res, next) => {
+  const { id } = req.params;
+  const userId = req.user.id; // Assuming user is authenticated and added to req.user
 
   try {
-    const reviews = await Review.findAll({
-      where: { userId },  
-      include: [
-        {
-          model: Spot,  
-          as: 'spot',
-          attributes: ['id', 'ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price', 'previewImage'],
-        },
-        {
-          model: User,  
-          as: 'user',
-          attributes: ['id', 'firstName', 'lastName'],
-        },
-        {
-          model: ReviewImage,  
-          as: 'reviewImages',
-          attributes: ['id', 'url'],
-        },
-      ],
-    });
-
-    if (reviews.length === 0) {
-      return res.status(404).json({ message: "No reviews found for this user." });
+    const review = await Review.findByPk(id);
+    if (!review || review.user_id !== userId) {
+      return res.status(403).json({ error: 'You do not have permission to access this review.' });
     }
-    
-    const formattedReviews = reviews.map(review => {
-      const moment = require('moment');
-      const formattedCreatedAt = moment(review.createdAt).format('YYYY-MM-DD HH:mm:ss');
-      const formattedUpdatedAt = moment(review.updatedAt).format('YYYY-MM-DD HH:mm:ss');
-      return {
-        id: review.id,
-        userId: review.userId,
-        spotId: review.spotId,
-        review: review.review,
-        stars: review.stars,
-        createdAt: formattedCreatedAt,
-        updatedAt: formattedUpdatedAt,
-        User: review.user,  
-        Spot: review.spot,  
-        ReviewImages: review.reviewImages, 
-      };
-    });
-
-    return res.status(200).json({ Reviews: formattedReviews });
+    next();
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res.status(500).json({ error: 'Failed to validate review ownership.' });
   }
-});
-  
+};
 
-//GET ALL REVIEWS BY SPOT ID (MOCHA TESTS: changed Users to user and re-wrapped review.reviewImages.map)
-// GET ALL REVIEWS BY SPOT ID
-router.get('/:spotId/reviews', async (req, res) => {
-  const { spotId } = req.params;
-
-  //console.log("GET request received for spot ID:", spotId);  
-
+// Get all reviews for a specific club
+router.get('/:clubId/reviews', async (req, res) => {
   try {
-    const spot = await Spot.findByPk(spotId);
-
-    if (!spot) {
-      return res.status(404).json({
-        message: "Spot couldn't be found",
-      });
-    }
-
+    const { clubId } = req.params;
     const reviews = await Review.findAll({
-      where: { spotId: spotId },
-      include: [
-        {
-          model: User,
-          as: 'user',  
-          attributes: ['id', 'firstName', 'lastName'],
-        },
-        {
-          model: ReviewImage,
-          as: 'reviewImages',  
-          attributes: ['id', 'url'],
-        },
-      ],
-      //added for frontend
-      order: [['createdAt', 'DESC']], // Added to sort reviews by createdAt in descending order  
+      where: { club_id: clubId },
+      include: {
+        model: User,
+        attributes: ['id', 'first_name', 'last_name'], // Include user details
+      },
     });
 
     if (reviews.length === 0) {
-      return res.status(404).json({
-        message: "No reviews found for this spot.",
-      });
+      return res.status(404).json({ error: 'No reviews found for this club.' });
     }
 
-    const formattedReviews = reviews.map(review => {
-      const formattedCreatedAt = moment(review.createdAt).format('YYYY-MM-DD HH:mm:ss');
-      const formattedUpdatedAt = moment(review.updatedAt).format('YYYY-MM-DD HH:mm:ss');
-
-      return {
-        id: review.id,
-        userId: review.userId,
-        spotId: review.spotId,
-        review: review.review,
-        stars: review.stars,
-        createdAt: formattedCreatedAt,
-        updatedAt: formattedUpdatedAt,
-        User: {
-          id: review.user.id,
-          firstName: review.user.firstName,
-          lastName: review.user.lastName,
-        },
-        ReviewImages: (review.reviewImages || []).map(image => ({
-          id: image.id,
-          url: image.url,
-        })),
-      };
-    });
-
-    return res.status(200).json({ Reviews: formattedReviews });
-  } catch (err) {
-    console.error(err);  
-    return res.status(500).json({
-      message: "Internal server error",
-    });
+    res.json(reviews);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch reviews for the club.' });
   }
 });
 
-  
-//CREATE REVIEW
-router.post('/:spotId/reviews', requireAuth, async (req, res) => {
-  const { spotId } = req.params;
-  const { review, stars } = req.body;
-  const userId = req.user.id;  
-
-  const spot = await Spot.findByPk(spotId);
-  if (!spot) {
-    return res.status(404).json({
-      message: "Spot couldn't be found"
-    });
-  }
-
-  const existingReview = await Review.findOne({
-    where: { userId, spotId }
-  });
-
-  if (existingReview) {
-    return res.status(500).json({
-      message: "User already has a review for this spot"
-    });
-  }
-
-  const errors = {};
-  if (!review) {
-    errors.review = "Review text is required";
-  }
-  if (!stars || stars < 1 || stars > 5 || !Number.isInteger(stars)) {
-    errors.stars = "Stars must be an integer from 1 to 5";
-  }
-
-  if (Object.keys(errors).length > 0) {
-    return res.status(400).json({
-      message: "Bad Request",
-      errors: errors
-    });
-  }
-
+// Get a specific review
+router.get('/:id', async (req, res) => {
   try {
+    const { id } = req.params;
+    const review = await Review.findByPk(id, {
+      include: {
+        model: User,
+        attributes: ['id', 'first_name', 'last_name'], // Include user details
+      },
+    });
+
+    if (!review) {
+      return res.status(404).json({ error: 'Review not found.' });
+    }
+
+    res.json(review);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch review details.' });
+  }
+});
+
+// Add a new review to a club
+router.post('/:clubId/reviews', async (req, res) => {
+  try {
+    const { clubId } = req.params;
+    const { rating, review_text } = req.body;
+    const userId = req.user.id; // Assuming user is authenticated
+
+    // Check if the club exists
+    const club = await Club.findByPk(clubId);
+    if (!club) {
+      return res.status(404).json({ error: 'Club not found.' });
+    }
+
+    // Create the review
     const newReview = await Review.create({
-      userId,
-      spotId,
-      review,
-      stars
+      user_id: userId,
+      club_id: clubId,
+      rating,
+      review_text,
     });
 
-    const formattedCreatedAt = moment(newReview.createdAt).format('YYYY-MM-DD HH:mm:ss');
-    const formattedUpdatedAt = moment(newReview.updatedAt).format('YYYY-MM-DD HH:mm:ss');
-
-    return res.status(201).json({
-      id: newReview.id,
-      userId: newReview.userId,
-      spotId: newReview.spotId,
-      review: newReview.review,
-      stars: newReview.stars,
-      createdAt: formattedCreatedAt,
-      updatedAt: formattedUpdatedAt
-    });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      message: "Internal server error"
-    });
+    res.status(201).json(newReview);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add review to the club.' });
   }
 });
 
-//ADD AN IMAGE TO REVIEW ID
-router.post('/:reviewId/images', requireAuth, async (req, res) => {
-  const { reviewId } = req.params;
-  const { url } = req.body;
-  const userId = req.user.id; 
-
-  const review = await Review.findByPk(reviewId);
-  if (!review) {
-    return res.status(404).json({
-      message: "Review couldn't be found"
-    });
-  }
-
-  if (review.userId !== userId) {
-    return res.status(403).json({
-      message: "You are not authorized to add an image to this review"
-    });
-  }
-
-  const imageCount = await ReviewImage.count({
-    where: { reviewId }
-  });
-  if (imageCount >= 10) {
-    return res.status(403).json({
-      message: "Maximum number of images for this resource was reached"
-    });
-  }
-
-  if (!url) {
-    return res.status(400).json({
-      message: "Bad Request",
-      errors: { url: "Image URL is required" }
-    });
-  }
-
+// Update an existing review
+router.put('/:id', isReviewOwner, async (req, res) => {
   try {
-    const newImage = await ReviewImage.create({
-      reviewId,
-      url
-    });
+    const { id } = req.params;
+    const { rating, review_text } = req.body;
 
-    return res.status(201).json({
-      id: newImage.id,
-      url: newImage.url
-    });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      message: "Internal server error"
-    });
+    const review = await Review.findByPk(id);
+    if (!review) {
+      return res.status(404).json({ error: 'Review not found.' });
+    }
+
+    await review.update({ rating, review_text });
+    res.json(review);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update review.' });
   }
 });
 
-//EDIT REVIEW
-router.put('/:reviewId', requireAuth, async (req, res) => {
-  const { reviewId } = req.params;
-  const { review, stars } = req.body;
-  const userId = req.user.id; 
-
-  const existingReview = await Review.findByPk(reviewId);
-  if (!existingReview) {
-    return res.status(404).json({
-      message: "Review couldn't be found"
-    });
-  }
-
-  if (existingReview.userId !== userId) {
-    return res.status(403).json({
-      message: "You are not authorized to edit this review"
-    });
-  }
-
-  const errors = {};
-  if (!review || review.trim().length === 0) {
-    errors.review = "Review text is required";
-  }
-  if (typeof stars !== 'number' || stars < 1 || stars > 5) {
-    errors.stars = "Stars must be an integer from 1 to 5";
-  }
-
-  if (Object.keys(errors).length > 0) {
-    return res.status(400).json({
-      message: "Bad Request",
-      errors: errors
-    });
-  }
-
+// Delete a review
+router.delete('/:id', isReviewOwner, async (req, res) => {
   try {
-    existingReview.review = review;
-    existingReview.stars = stars;
-    await existingReview.save();
+    const { id } = req.params;
 
-    const formattedCreatedAt = moment(existingReview.createdAt).format('YYYY-MM-DD HH:mm:ss');
-    const formattedUpdatedAt = moment(existingReview.updatedAt).format('YYYY-MM-DD HH:mm:ss');
+    const review = await Review.findByPk(id);
+    if (!review) {
+      return res.status(404).json({ error: 'Review not found.' });
+    }
 
-    return res.status(200).json({
-      id: existingReview.id,
-      userId: existingReview.userId,
-      spotId: existingReview.spotId,
-      review: existingReview.review,
-      stars: existingReview.stars,
-      createdAt: formattedCreatedAt,
-      updatedAt: formattedUpdatedAt
-    });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      message: "Internal server error"
-    });
+    await review.destroy();
+    res.json({ message: 'Review deleted successfully.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete review.' });
   }
 });
 
-//DELETE REVIEW
-router.delete('/:reviewId', requireAuth, async (req, res) => {
-  const { reviewId } = req.params;
-  const userId = req.user.id; 
-
-  const existingReview = await Review.findByPk(reviewId);
-  if (!existingReview) {
-    return res.status(404).json({
-      message: "Review couldn't be found"
-    });
-  }
-
-  if (existingReview.userId !== userId) {
-    return res.status(403).json({
-      message: "You are not authorized to delete this review"
-    });
-  }
-
-  try {
-    await existingReview.destroy();
-    return res.status(200).json({
-      message: "Successfully deleted"
-    });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      message: "Internal server error"
-    });
-  }
-});
-
-
-  module.exports = router;
-  
+module.exports = router;

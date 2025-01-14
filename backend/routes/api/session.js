@@ -12,10 +12,11 @@ const { handleValidationErrors } = require('../../utils/validation');
 const router = express.Router();
 
 const validateLogin = [
-    check('credential')
+    check('email')
       .exists({ checkFalsy: true })
       .notEmpty()
-      .withMessage(/*'Please provide a valid email or username.'*/ 'Email or username is required'),
+      .isEmail()
+      .withMessage(/*'Please provide a valid email.'*/ 'Email is required'),
     check('password')
       .exists({ checkFalsy: true })
       .withMessage(/*'Please provide a password.'*/ 'Password is required'),
@@ -26,15 +27,10 @@ router.post(
     '/',
     validateLogin,
     async (req, res, next) => {
-      const { credential, password } = req.body;
+      const { email, password } = req.body;
   
       const user = await User.unscoped().findOne({
-        where: {
-          [Op.or]: {
-            username: credential,
-            email: credential
-          }
-        }
+        where: { email },
       });
       //removed for frontend
       // if (!user || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
@@ -47,11 +43,11 @@ router.post(
       if (!user) {
         const err = new Error('Invalid credentials');
         err.status = 401;
-        err.errors = { credential: /*'Valid Email or username is required'*/ 'The provided credentials were invalid' }; // Adding error for credential field
+        err.errors = { email: 'The provided email is not registered' }; // Adding error for credential field
         return next(err);
       }
       //added for frontend
-      if (!bcrypt.compareSync(password, user.hashedPassword.toString())) {
+      if (!bcrypt.compareSync(password, user.password)) {
         const err = new Error('Invalid credentials');
         err.status = 401;
         err.errors = { password: 'Incorrect password' }; // Adding error for password field
@@ -60,10 +56,9 @@ router.post(
   
       const safeUser = {
         id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        firstName: user.first_name,
+        lastName: user.last_name,
         email: user.email,
-        username: user.username,
       };
   
       await setTokenCookie(res, safeUser);
@@ -89,10 +84,9 @@ router.post(
       if (user) {
         const safeUser = {
           id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
+          firstName: user.first_name,
+          lastName: user.last_name,
           email: user.email,
-          username: user.username,
         };
         return res.json({
           user: safeUser
