@@ -32,12 +32,6 @@ router.post(
       const user = await User.unscoped().findOne({
         where: { email },
       });
-      //removed for frontend
-      // if (!user || !bcrypt.compareSync(password, user.hashedPassword.toString())) {
-      //   const err = new Error( 'Invalid credentials');
-      //   err.status = 401;
-      //   return next(err);
-      // }
 
       //added for frontend
       if (!user) {

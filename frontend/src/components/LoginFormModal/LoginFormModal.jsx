@@ -1,64 +1,3 @@
-// import { useState } from 'react';
-// import * as sessionActions from '../../store/session';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { Navigate } from 'react-router-dom';
-// import { useModal } from '../../context/Modal';
-// import './LoginFormModal.css';
-
-
-// function LoginFormPage() {
-//     console.log("LoginFormModal is rendering");
-//   const dispatch = useDispatch();
-//   const sessionUser = useSelector((state) => state.session.user);
-//   const [credential, setCredential] = useState("");
-//   const [password, setPassword] = useState("");
-//   const [errors, setErrors] = useState({});
-
-//   if (sessionUser) return <Navigate to="/" replace={true} />;
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     setErrors({});
-//     return dispatch(sessionActions.login({ credential, password })).catch(
-//       async (res) => {
-//         const data = await res.json();
-//         if (data?.errors) setErrors(data.errors);
-//       }
-//     );
-//   };
-
-//   return (
-//     <>
-//       <h1>Log In</h1>
-//       <form onSubmit={handleSubmit}>
-//         <label>
-//           Username or Email
-//           <input
-//             type="text"
-//             value={credential}
-//             onChange={(e) => setCredential(e.target.value)}
-//             required
-//           />
-//         </label>
-//         <label>
-//           Password
-//           <input
-//             type="password"
-//             value={password}
-//             onChange={(e) => setPassword(e.target.value)}
-//             required
-//           />
-//         </label>
-//         {errors.credential && <p>{errors.credential}</p>}
-//         <button type="submit">Log In</button>
-//       </form>
-//     </>
-//   );
-// }
-
-// export default LoginFormPage;
-
-//Phase 4
 import { useState, useEffect } from 'react';
 import * as sessionActions from '../../store/session';
 import { useDispatch } from 'react-redux';
@@ -67,44 +6,44 @@ import './LoginForm.css';
 
 function LoginFormModal() {
   const dispatch = useDispatch();
-  const [credential, setCredential] = useState("");
+  const [email, setEmail] = useState(""); // Changed from `credential` to `email`
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [isDisabled, setIsDisabled] = useState(true);
   const { closeModal } = useModal();
 
-// Effect to enable button when form is valid
-useEffect(() => {
-  if (credential.length >= 4 && password.length >= 6) {
-    setIsDisabled(false); // Enable button if both fields are filled
-  } else {
-    setIsDisabled(true); // Disable button if any field is empty
-  }
-}, [credential, password]);
+  // Effect to enable button when form is valid
+  useEffect(() => {
+    if (email.length >= 4 && password.length >= 6) {
+      setIsDisabled(false); // Enable button if both fields are valid
+    } else {
+      setIsDisabled(true); // Disable button otherwise
+    }
+  }, [email, password]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
-    return dispatch(sessionActions.login({ credential, password }))
-    .then(() => {
+    try {
+      await dispatch(sessionActions.login({ email, password })); // Use `email` here
       closeModal();
-      window.location = '/'; // Redirect to homepage
-    })
-      .catch(async (res) => {
-        const data = await res.json();
-        if (data && data.errors) {
-          setErrors(data.errors);
-        }
-      });
+      window.location = '/clubs'; // Redirect to the homepage after login
+    } catch (res) {
+      const data = await res.json();
+      if (data && data.errors) {
+        setErrors(data.errors);
+      }
+    }
   };
 
-  const handleDemoLogin = () => {
-    dispatch(sessionActions.login({ credential: 'Demo-lition', password: 'password' }))
-    .then(() => {
+  const handleDemoLogin = async () => {
+    try {
+      await dispatch(sessionActions.login({ email: 'demoUser@test.com', password: 'password' }));
       closeModal();
-      window.location = '/'; // Redirect to homepage
-    })
-      .catch((err) => console.error('Demo login failed', err));
+      window.location = '/clubs'; // Redirect to the homepage after demo login
+    } catch (err) {
+      console.error('Demo login failed:', err);
+    }
   };
 
   return (
@@ -112,15 +51,15 @@ useEffect(() => {
       <h1>Log In</h1>
       {/* Display error message at the top */}
       {Object.keys(errors).length > 0 && (
-        <p className="error-message">{errors.credential || errors.password || 'Invalid credentials'}</p>
+        <p className="error-message">{errors.email || errors.password || 'Invalid credentials'}</p>
       )}
       <form onSubmit={handleSubmit}>
         <label>
-          Username or Email
+          Email
           <input
-            type="text"
-            value={credential}
-            onChange={(e) => setCredential(e.target.value)}
+            type="email" // Changed to email for better semantic validation
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </label>
@@ -133,7 +72,9 @@ useEffect(() => {
             required
           />
         </label>
-        <button type="submit" disabled={isDisabled}>Log In</button>
+        <button type="submit" disabled={isDisabled}>
+          Log In
+        </button>
       </form>
       <button className="demo-user-btn" onClick={handleDemoLogin}>
         Demo User
@@ -141,6 +82,5 @@ useEffect(() => {
     </>
   );
 }
-
 
 export default LoginFormModal;

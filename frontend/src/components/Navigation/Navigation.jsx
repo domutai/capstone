@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ProfileButton from './ProfileButton';
 import './Navigation.css';
-import janbIcon from '../../assets/Images/janbIcon.png';
+import thelist from '../../assets/Images/thelist.png';
 
 function Navigation({ isLoaded }) {
   const sessionUser = useSelector(state => state.session.user);
@@ -11,7 +11,7 @@ function Navigation({ isLoaded }) {
   <nav className="navigation-container">
     <NavLink to="/" className="logo-link">
     <div className="app-logo-name">
-    <img src={janbIcon} alt="App Logo" className="app-logo" /> 
+    <img src={thelist} alt="App Logo" className="app-logo" /> 
     <span className="app-name">The List</span>
     </div>
     </NavLink>

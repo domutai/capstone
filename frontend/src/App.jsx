@@ -4,12 +4,12 @@ import { createBrowserRouter, RouterProvider, Outlet, useLocation } from 'react-
 import * as sessionActions from './store/session';
 import Navigation from './components/Navigation';
 import SpotDetails from './components/SpotDetails';
-import CreateNewSpot from './components/CreateNewSpot';
 import ManageSpots from './components/ManageSpots/ManageSpots';
 import UpdateSpot from './components/UpdateSpot';
 import ManageReviews from './components/ManageReviews/ManageReviews';
 
 import LandingPage from './components/LandingPage';
+import Homepage from './components/Homepage';
 
 
 
@@ -42,8 +42,8 @@ const router = createBrowserRouter([
         element: <LandingPage />
       },
       {
-        path: '/spots',
-        element: <CreateNewSpot />
+        path: '/clubs',
+        element: <Homepage />
       },
       {
         path: '/spots/:spotId',

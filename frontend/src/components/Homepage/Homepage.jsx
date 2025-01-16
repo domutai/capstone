@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './Homepage.css';
 
 const Homepage = () => {
@@ -8,7 +8,7 @@ const Homepage = () => {
   useEffect(() => {
     fetch('/api/clubs')
       .then((res) => res.json())
-      .then((data) => setClubs(data.clubs || [])) // Assume the API returns a `clubs` array
+      .then((data) => setClubs(data || [])) // Assume the API returns a `clubs` array
       .catch((err) => console.error('Error fetching clubs:', err));
   }, []);
 
@@ -19,7 +19,6 @@ const Homepage = () => {
         <select className="city-dropdown">
           <option value="new-york">New York</option>
           <option value="los-angeles">Los Angeles</option>
-          <option value="miami">Miami</option>
           {/* Add more cities */}
         </select>
       </header>

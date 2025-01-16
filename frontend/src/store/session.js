@@ -16,10 +16,10 @@ const removeUser = () => ({
 
 // Thunk Action for Logging In
 export const login = (user) => async (dispatch) => {
-  const { credential, password } = user;
+  const { email, password } = user;
   const response = await csrfFetch("/api/session", {
     method: "POST",
-    body: JSON.stringify({ credential, password })
+    body: JSON.stringify({ email, password })
   });
   const data = await response.json();
   dispatch(setUser(data.user));
@@ -41,11 +41,6 @@ const sessionReducer = (state = initialState, action) => {
   }
 };
 
-//log out Thunk Action Phase 1
-// export const logout = () => async (dispatch) => {
-//   await csrfFetch('/api/session', { method: 'DELETE' }); 
-//   dispatch(removeUser());
-// };
 
 //Thunk action for Restoring Session User across a refresh
 export const restoreUser = () => async (dispatch) => {
@@ -57,11 +52,10 @@ export const restoreUser = () => async (dispatch) => {
 
 //Sign Up Thunk Action
 export const signup = (user) => async (dispatch) => {
-  const { username, firstName, lastName, email, password } = user;
+  const { firstName, lastName, email, password } = user;
   const response = await csrfFetch("/api/users", {
     method: "POST",
     body: JSON.stringify({
-      username,
       firstName,
       lastName,
       email,
