@@ -54,25 +54,6 @@ const SpotDetails = () => {
     fetchCsrfToken();
   }, []);
 
-  // Fetch user lookup table
-  // useEffect(() => {
-  //   const fetchUserLookup = async () => {
-  //     try {
-  //       const response = await fetch('/api/users'); // Adjust this route based on your backend
-  //       const data = await response.json();
-  //       const lookup = data.Users.reduce((acc, user) => {
-  //         acc[user.id] = user.firstName;
-  //         return acc;
-  //       }, {});
-  //       setUserLookup(lookup);
-  //     } catch (error) {
-  //       console.error("Error fetching user lookup:", error);
-  //     }
-  //   };
-
-  //   fetchUserLookup();
-  // }, []);
-
   const handleReserveClick = () => {
     alert("Feature Coming Soon...");
   };
