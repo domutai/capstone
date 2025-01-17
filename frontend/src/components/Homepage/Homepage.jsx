@@ -3,23 +3,27 @@ import './Homepage.css';
 
 const Homepage = () => {
   const [clubs, setClubs] = useState([]);
+  const [selectedCity, setSelectedCity] = useState('New York City');
 
-  // Fetch clubs data on component mount
+  // Fetch clubs whenever the selected city changes
   useEffect(() => {
-    fetch('/api/clubs')
+    fetch(`/api/clubs?major_city=${encodeURIComponent(selectedCity)}`)
       .then((res) => res.json())
-      .then((data) => setClubs(data || [])) // Assume the API returns a `clubs` array
+      .then((data) => setClubs(data || []))
       .catch((err) => console.error('Error fetching clubs:', err));
-  }, []);
+  }, [selectedCity]);
+
+  const handleCityChange = (e) => {
+    setSelectedCity(e.target.value);
+  };
 
   return (
     <div className="homepage">
       <header className="homepage-header">
-        <h1>The List Clubs</h1>
-        <select className="city-dropdown">
-          <option value="new-york">New York</option>
-          <option value="los-angeles">Los Angeles</option>
-          {/* Add more cities */}
+        <h1>Choose A City:</h1>
+        <select className="city-dropdown" value={selectedCity} onChange={handleCityChange}>
+          <option value="New York City">New York City</option>
+          <option value="Los Angeles">Los Angeles</option>
         </select>
       </header>
 
@@ -32,11 +36,17 @@ const Homepage = () => {
               className="club-image"
             />
             <div className="club-details">
-              <h2 className="club-name">{club.name}</h2>
-              <p className="club-address">{club.city}, {club.state}</p>
-              <p className="club-price-range">Price Range: {club.price_range}</p>
-              <p className="club-rating">
-                ⭐ {club.avg_rating ? club.avg_rating.toFixed(1) : 'New'}
+              <h2 className="club-name">
+                {club.name}{' '}
+                {club.avg_rating && (
+                  <span className="club-rating">
+                    ⭐ {parseFloat(club.avg_rating).toFixed(1)}
+                  </span>
+                )}
+              </h2>
+              <p className="club-address">{club.location}</p>
+              <p className="club-price-range">
+                Price Range: ${club.min_price || 'N/A'} - ${club.max_price || 'N/A'}
               </p>
             </div>
           </div>

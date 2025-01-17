@@ -11,17 +11,16 @@ function SignupFormModal() {
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("user"); 
   const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
 
-  // Check if the form is incomplete
   const isFormIncomplete =
     !email || !firstName || !lastName || !password || !confirmPassword;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Local validation
     const validationErrors = {};
 
     if (!email.includes("@") || !email.includes(".")) {
@@ -40,13 +39,11 @@ function SignupFormModal() {
       validationErrors.confirmPassword = "Passwords do not match.";
     }
 
-    // If local validation fails, set errors and stop
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
-    // Backend validation
     try {
       await dispatch(
         sessionActions.signup({
@@ -54,24 +51,21 @@ function SignupFormModal() {
           firstName,
           lastName,
           password,
+          role, 
         })
       );
-      closeModal(); // Close modal on successful signup
-      window.location = '/clubs'; // Redirect to homepage
+      closeModal();
+      window.location = '/clubs'; 
     } catch (res) {
       const data = await res.json();
-
       const backendErrors = {};
+
       if (data?.errors) {
-        if (data.errors.email) {
-          backendErrors.email = data.errors.email;
-        }
-        if (data.errors.password) {
-          backendErrors.password = data.errors.password;
-        }
+        if (data.errors.email) backendErrors.email = data.errors.email;
+        if (data.errors.password) backendErrors.password = data.errors.password;
+        if (data.errors.role) backendErrors.role = data.errors.role;
       }
 
-      // Set backend errors
       setErrors(backendErrors);
     }
   };
@@ -131,6 +125,13 @@ function SignupFormModal() {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
+        </label>
+        <label>
+          Role
+          <select value={role} onChange={(e) => setRole(e.target.value)}>
+            <option value="user">User</option>
+            <option value="owner">Owner</option>
+          </select>
         </label>
         <button
           type="submit"

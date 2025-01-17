@@ -22,6 +22,10 @@ const validateSignup = [
   check('lastName')
     .exists({ checkFalsy: true })
     .withMessage('Last name is required.'),
+    // check('role')
+    // .exists({ checkFalsy: true })
+    // .isIn(['user', 'owner'])
+    // .withMessage('Role must be either user or owner.'),
   handleValidationErrors,
 ];
 
@@ -29,7 +33,8 @@ router.post(
   '/',
   validateSignup,
   async (req, res) => {
-    const { email, password, firstName, lastName } = req.body;
+    console.log(req.body); // Log the incoming request body
+    const { email, password, firstName, lastName, role } = req.body;
 
     // Check if the email is already in use
     const existingUserByEmail = await User.findOne({ where: { email } });
@@ -52,6 +57,7 @@ router.post(
       password: hashedPassword,
       first_name: firstName,
       last_name: lastName,
+      role
     });
 
     // Return safe user details
@@ -60,6 +66,7 @@ router.post(
       firstName: user.first_name,
       lastName: user.last_name,
       email: user.email,
+      role: user.role
     };
 
     await setTokenCookie(res, safeUser);
@@ -103,7 +110,7 @@ router.get('/:userId', requireAuth, async (req, res) => {
 router.get('/', requireAuth, async (req, res) => {
   try {
     const users = await User.findAll({
-      attributes: ['id', 'first_name'], // Adjusted to match your model
+      attributes: ['id', 'first_name'], 
     });
 
     return res.status(200).json({ Users: users });

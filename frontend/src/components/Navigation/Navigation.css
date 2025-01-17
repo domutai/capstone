@@ -1,26 +1,4 @@
-/* .profile-dropdown {
-    position: absolute;
-    top: 40px;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ddd;
-    list-style-type: none;
-    padding: 10px;
-    margin: 0;
-  }
-  
-  .profile-dropdown.hidden {
-    display: none;
-  }
-  
-  .profile-dropdown li {
-    padding: 5px 10px;
-  }
-  
-  .profile-dropdown li button {
-    padding: 5px 10px;
-    cursor: pointer;
-  } Previous phase code in authenicate me*/
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
   .navigation-container {
     display: flex;
@@ -55,9 +33,9 @@
   /* App name styles */
   .app-name {
     font-size: 1.5rem;
+    font-family: 'Great Vibes', cursive; /* Fancy font */
     font-weight: bold;
-    color: #333; /* Dark color for contrast */
-    text-decoration: none; /* Remove any link-style underline if needed */
+    color: gold;
   }
   
   /* List styling for navigation items */

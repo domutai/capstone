@@ -1,4 +1,4 @@
-import { csrfFetch } from './csrf';  // import csrfFetch for making requests
+import { csrfFetch } from './csrf';  
 
 // Action Types
 const SET_USER = "session/setUser";
@@ -14,6 +14,20 @@ const removeUser = () => ({
   type: REMOVE_USER,
 });
 
+// // Thunk Action for Logging In
+// export const login = (user) => async (dispatch) => {
+//   const { email, password } = user;
+//   const response = await csrfFetch("/api/session", {
+//     method: "POST",
+//     body: JSON.stringify({ email, password })
+//   });
+//   const data = await response.json();
+//   dispatch(setUser(data.user));
+//   return response;
+// };
+
+
+//New frontend log in
 // Thunk Action for Logging In
 export const login = (user) => async (dispatch) => {
   const { email, password } = user;
@@ -21,9 +35,15 @@ export const login = (user) => async (dispatch) => {
     method: "POST",
     body: JSON.stringify({ email, password })
   });
-  const data = await response.json();
-  dispatch(setUser(data.user));
-  return response;
+
+  if (response.ok) {
+    const data = await response.json();
+    dispatch(setUser(data.user)); 
+    return response;
+  } else {
+    console.error('Login failed');
+    throw new Error('Login failed');
+  }
 };
 
 // Initial state for the session reducer
@@ -41,6 +61,14 @@ const sessionReducer = (state = initialState, action) => {
   }
 };
 
+//Fetch session action
+export const fetchSessionUser = () => async (dispatch) => {
+  const response = await fetch('/api/session'); 
+  if (response.ok) {
+    const data = await response.json();
+    dispatch(setUser(data.user)); 
+  }
+};
 
 //Thunk action for Restoring Session User across a refresh
 export const restoreUser = () => async (dispatch) => {
@@ -50,22 +78,31 @@ export const restoreUser = () => async (dispatch) => {
   return response;
 };
 
-//Sign Up Thunk Action
+
+// Sign Up Thunk Action with Role
 export const signup = (user) => async (dispatch) => {
-  const { firstName, lastName, email, password } = user;
+  const { firstName, lastName, email, password, role } = user; 
   const response = await csrfFetch("/api/users", {
     method: "POST",
     body: JSON.stringify({
       firstName,
       lastName,
       email,
-      password
-    })
+      password,
+      role, 
+    }),
   });
-  const data = await response.json();
-  dispatch(setUser(data.user));
-  return response;
+
+  if (response.ok) {
+    const data = await response.json();
+    dispatch(setUser(data.user));
+    return response;
+  } else {
+    console.error('Signup failed');
+    throw new Error('Signup failed');
+  }
 };
+
 
 //Logout Thunk Action Phase 3
 export const logout = () => async (dispatch) => {

@@ -1,11 +1,22 @@
 import { NavLink } from 'react-router-dom'; 
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import ProfileButton from './ProfileButton';
 import './Navigation.css';
 import thelist from '../../assets/Images/thelist.png';
+import { fetchSessionUser } from '../../store/session';
+import { useEffect } from 'react';
+
+
 
 function Navigation({ isLoaded }) {
   const sessionUser = useSelector(state => state.session.user);
+  const dispatch = useDispatch();
+
+    useEffect(() => {
+      if (!sessionUser) {
+        dispatch(fetchSessionUser()); 
+      }
+    }, [dispatch, sessionUser]);
 
   return (
   <nav className="navigation-container">
@@ -18,12 +29,12 @@ function Navigation({ isLoaded }) {
     <ul className="navigation-list">
   {isLoaded && (
     <>
-      {/* Only show "Create a New Spot" link if the user is logged in */}
-      {sessionUser && (
-        <li className="navigation-item create-new-spot">
-          <NavLink to="/spots">Create a New Spot</NavLink> {/* New link added */}
-        </li>
-      )}
+            {/* Show the user's role */}
+            {sessionUser && (
+              <li className="navigation-item user-role">
+                <span>Role: {sessionUser.role}</span>
+              </li>
+            )}
       {/* Profile button is available to all users */}
       <li className="navigation-item">
         <ProfileButton user={sessionUser} />

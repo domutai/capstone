@@ -38,7 +38,6 @@ module.exports = {
       role: {
         type: Sequelize.ENUM('user', 'owner'),
         allowNull: false,
-        defaultValue: 'user',
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -108,7 +107,6 @@ module.exports = {
 //       role: {
 //         type: Sequelize.ENUM('user', 'owner'),
 //         allowNull: false,
-//         defaultValue: 'user',
 //       },
 //       createdAt: {
 //         type: Sequelize.DATE,

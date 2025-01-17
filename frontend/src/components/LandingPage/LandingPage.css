@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
 
-/* General Styles */
 .landing-container {
   display: flex;
   flex-direction: column;
@@ -13,17 +12,15 @@
   position: relative;
 }
 
-/* Animated Text */
 .animated-text {
-  font-family: 'Great Vibes', cursive; /* Fancy font */
+  font-family: 'Great Vibes', cursive; 
   font-size: 10rem;
   font-weight: bold;
   text-align: center;
-  animation: fadeIn 3s ease-out; /* Combine fade-in */
+  animation: fadeIn 3s ease-out; 
   color: gold;
 }
 
-/* Button Styles */
 .yes-button {
   margin-top: 20px;
   padding: 10px 20px;
@@ -43,26 +40,24 @@
   box-shadow: 0 0 10px 2px gold;
 }
 
-/* Dropdown menu */
 .menu-container {
-  height: 150px; /* Reserve space for dropdown menu */
+  height: 150px; 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   gap: 10px;
-  visibility: hidden; /* Initially hide the dropdown */
+  visibility: hidden; 
   opacity: 0;
-  margin-top: 20px; /* Space between "Yes" button and dropdown */
+  margin-top: 20px; 
   transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
 .menu-container.show {
-  visibility: visible; /* Make dropdown visible */
-  opacity: 1; /* Fade in */
+  visibility: visible; 
+  opacity: 1; 
 }
 
-/* Dropdown Button Styles */
 .menu-item {
   padding: 10px 20px;
   font-size: 1rem;
@@ -80,12 +75,10 @@
   box-shadow: 0 0 10px 2px gold;
 }
 
-/* Flashing animation applied conditionally */
 .flashing {
   animation: flash 1s infinite;
 }
 
-/* Keyframes for Animations */
 @keyframes fadeIn {
   0% {
     opacity: 0;

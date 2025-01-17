@@ -37,14 +37,14 @@ router.post(
       if (!user) {
         const err = new Error('Invalid credentials');
         err.status = 401;
-        err.errors = { email: 'The provided email is not registered' }; // Adding error for credential field
+        err.errors = { email: 'The provided email is not registered' }; 
         return next(err);
       }
       //added for frontend
       if (!bcrypt.compareSync(password, user.password)) {
         const err = new Error('Invalid credentials');
         err.status = 401;
-        err.errors = { password: 'Incorrect password' }; // Adding error for password field
+        err.errors = { password: 'Incorrect password' }; 
         return next(err);
       }
   
@@ -81,6 +81,7 @@ router.post(
           firstName: user.first_name,
           lastName: user.last_name,
           email: user.email,
+          role: user.role, 
         };
         return res.json({
           user: safeUser
