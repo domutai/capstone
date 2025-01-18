@@ -18,7 +18,8 @@ module.exports = {
       for (let j = 1; j <= 3; j++) { // 3 images per club
         clubImages.push({
           club_id: i,
-          image_url: `https://your-bucket-name.s3.amazonaws.com/club${i}-image${j}.jpg`,
+          //image_url: `https://your-bucket-name.s3.amazonaws.com/club${i}-image${j}.jpg`,
+          image_url: `https://images.squarespace-cdn.com/content/v1/56e057cda3360c23799f9ec5/1636172869234-5IAHCKFXMGZF6OGARRHS/Nebula+Interior+3.jpg`,
           description: `Image ${j} for Club ${i}`,
           createdAt: new Date(),
           updatedAt: new Date(),

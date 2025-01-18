@@ -3,13 +3,15 @@ import { useDispatch } from 'react-redux';
 import { createBrowserRouter, RouterProvider, Outlet, useLocation } from 'react-router-dom';
 import * as sessionActions from './store/session';
 import Navigation from './components/Navigation';
-import SpotDetails from './components/SpotDetails';
 import ManageSpots from './components/ManageSpots/ManageSpots';
 import UpdateSpot from './components/UpdateSpot';
 import ManageReviews from './components/ManageReviews/ManageReviews';
 
 import LandingPage from './components/LandingPage';
 import Homepage from './components/Homepage';
+import ClubDetails from './components/ClubDetails';
+
+import 'react-datepicker/dist/react-datepicker.css';
 
 
 
@@ -46,8 +48,8 @@ const router = createBrowserRouter([
         element: <Homepage />
       },
       {
-        path: '/spots/:spotId',
-        element: <SpotDetails />
+        path: '/club/:id',
+        element: <ClubDetails />
       },
       {
         path: '/spots/current',

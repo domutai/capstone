@@ -1,5 +1,5 @@
 const express = require('express');
-const { Club, User, Review, Table } = require('../../db/models'); 
+const { Club, User, Review, Table, ClubImage } = require('../../db/models'); 
 const router = express.Router();
 const { Op, fn, col } = require('sequelize');
 const Sequelize = require('sequelize'); 
@@ -175,20 +175,85 @@ router.get('/', async (req, res) => {
 
 
 // Get a specific club
+// router.get('/:id', async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const club = await Club.findByPk(id, {
+//       attributes: ['id', 'name', 'location', 'description', 'main_image_url', 'table_map_url'],
+//     });
+//     if (!club) {
+//       return res.status(404).json({ error: 'Club not found.' });
+//     }
+//     res.json(club);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Failed to fetch club details.' });
+//   }
+// });
+
+//Get specific club frontend details page
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+
     const club = await Club.findByPk(id, {
-      attributes: ['id', 'name', 'location', 'description', 'main_image_url', 'table_map_url'],
+      attributes: [
+        'id',
+        'name',
+        'location',
+        'description',
+        'main_image_url',
+        'table_map_url',
+        [
+          // Average rating
+          Sequelize.fn('AVG', Sequelize.col('Reviews.rating')),
+          'avg_rating',
+        ],
+        [
+          // Review count
+          Sequelize.fn('COUNT', Sequelize.col('Reviews.id')),
+          'review_count',
+        ],
+      ],
+      include: [
+        {
+          model: User,
+          as: 'Owner',
+          attributes: ['first_name', 'last_name'],
+        },
+        {
+          model: Review,
+          attributes: ['id', 'rating', 'review_text', 'createdAt'],
+          include: [
+            {
+              model: User,
+              attributes: ['first_name', 'last_name'],
+            },
+          ],
+        },
+        {
+          model: Table,
+          attributes: ['table_name', 'price', 'capacity', 'image_url'],
+        },
+        {
+          model: ClubImage,
+          attributes: ['image_url', 'description'],
+        },
+      ],
+      group: ['Club.id', 'Owner.id', 'Reviews.id', 'Reviews->User.id', 'Tables.id', 'ClubImages.id'],
     });
+
     if (!club) {
       return res.status(404).json({ error: 'Club not found.' });
     }
+
     res.json(club);
   } catch (error) {
+    console.error('Error fetching club details:', error);
     res.status(500).json({ error: 'Failed to fetch club details.' });
   }
 });
+
+
 
 // Create a new club (owners only)
 router.post('/', isOwner, async (req, res) => {

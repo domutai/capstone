@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Club.associate = (models) => {
-    Club.belongsTo(models.User, { foreignKey: 'owner_id', onDelete: 'CASCADE' });
+    Club.belongsTo(models.User, { foreignKey: 'owner_id', onDelete: 'CASCADE', as: 'Owner' });
     Club.hasMany(models.Table, { foreignKey: 'club_id', onDelete: 'CASCADE' });
     Club.hasMany(models.Review, { foreignKey: 'club_id', onDelete: 'CASCADE' });
     Club.hasMany(models.ClubImage, { foreignKey: 'club_id', onDelete: 'CASCADE' });

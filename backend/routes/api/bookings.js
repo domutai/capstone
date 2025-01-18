@@ -69,15 +69,54 @@ router.get('/:id', isBookingOwner, async (req, res) => {
 });
 
 // Create a new booking
+// router.post('/', async (req, res) => {
+//   try {
+//     const { table_id, booking_date, booking_time } = req.body;
+//     const userId = req.user.id; // Assuming user is authenticated
+
+//     // Check if the table exists
+//     const table = await Table.findByPk(table_id);
+//     if (!table) {
+//       return res.status(404).json({ error: 'Table not found.' });
+//     }
+
+//     // Create the booking
+//     const newBooking = await Booking.create({
+//       user_id: userId,
+//       table_id,
+//       booking_date,
+//       booking_time,
+//       status: 'pending', // Default status
+//     });
+
+//     res.status(201).json(newBooking);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Failed to create booking.' });
+//   }
+// });
+
+// Create a new booking (no repeats)
 router.post('/', async (req, res) => {
   try {
     const { table_id, booking_date, booking_time } = req.body;
-    const userId = req.user.id; // Assuming user is authenticated
+    const userId = req.user.id; 
 
     // Check if the table exists
     const table = await Table.findByPk(table_id);
     if (!table) {
       return res.status(404).json({ error: 'Table not found.' });
+    }
+
+    // Check if a booking already exists for this table, date, and time
+    const existingBooking = await Booking.findOne({
+      where: {
+        table_id,
+        booking_date,
+      },
+    });
+
+    if (existingBooking) {
+      return res.status(400).json({ error: 'This table is already booked for the selected date.' });
     }
 
     // Create the booking
@@ -94,6 +133,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Failed to create booking.' });
   }
 });
+
 
 // Update an existing booking
 router.put('/:id', isBookingOwner, async (req, res) => {

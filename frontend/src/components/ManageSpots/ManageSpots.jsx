@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SpotCard from '../SpotCard/SpotCard'; // Reuse SpotCard for consistent layout
+//import SpotCard from '../SpotCard/SpotCard'; // Reuse SpotCard for consistent layout
 import DeleteSpotModal from '../DeleteSpotModal/DeleteSpotModal';
 import './ManageSpots.css';
 
