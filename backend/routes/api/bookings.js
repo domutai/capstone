@@ -19,6 +19,29 @@ const isBookingOwner = async (req, res, next) => {
 };
 
 // Get all bookings for the logged-in user
+// router.get('/', async (req, res) => {
+//   try {
+//     const userId = req.user.id; // Assuming user is authenticated
+//     const bookings = await Booking.findAll({
+//       where: { user_id: userId },
+//       include: [
+//         {
+//           model: Table,
+//           attributes: ['id', 'table_name', 'price', 'capacity', 'club_id'],
+//           include: {
+//             model: Club,
+//             attributes: ['id', 'name', 'location'],
+//           },
+//         },
+//       ],
+//     });
+//     res.json(bookings);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Failed to fetch bookings.' });
+//   }
+// });
+
+// Get all bookings for the logged-in user (MY BOOKINGS FRONTEND)
 router.get('/', async (req, res) => {
   try {
     const userId = req.user.id; // Assuming user is authenticated
@@ -27,19 +50,42 @@ router.get('/', async (req, res) => {
       include: [
         {
           model: Table,
-          attributes: ['id', 'table_name', 'price', 'capacity', 'club_id'],
+          attributes: ['id', 'table_name', 'price', 'capacity', 'image_url', 'club_id'], // Ensure 'image_url' is included
           include: {
             model: Club,
-            attributes: ['id', 'name', 'location'],
+            attributes: ['id', 'name', 'location', 'main_image_url'], // Include 'main_image_url' if needed
           },
         },
       ],
     });
-    res.json(bookings);
+
+    // Format the data for the frontend
+    const formattedBookings = bookings.map((booking) => ({
+      id: booking.id,
+      table: {
+        id: booking.Table.id,
+        name: booking.Table.table_name,
+        price: booking.Table.price,
+        capacity: booking.Table.capacity,
+        image_url: booking.Table.image_url, // Table image
+      },
+      club: {
+        id: booking.Table.Club.id,
+        name: booking.Table.Club.name,
+        location: booking.Table.Club.location,
+      },
+      date: booking.booking_date,
+      time: booking.booking_time,
+      status: booking.status,
+    }));
+
+    res.json(formattedBookings);
   } catch (error) {
+    console.error('Error fetching bookings:', error);
     res.status(500).json({ error: 'Failed to fetch bookings.' });
   }
 });
+
 
 // Get a specific booking
 router.get('/:id', isBookingOwner, async (req, res) => {

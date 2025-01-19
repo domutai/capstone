@@ -19,7 +19,7 @@ module.exports = {
         user_id: 1,
         table_id: 1, // VIP Table in Club 1 (Manhattan Nights)
         booking_date: '2025-02-14',
-        booking_time: '19:00:00',
+        booking_time: '22:00:00',
         status: 'confirmed',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -28,7 +28,7 @@ module.exports = {
         user_id: 1,
         table_id: 8, // Standard Table in Club 3 (Empire Groove)
         booking_date: '2025-03-21',
-        booking_time: '21:00:00',
+        booking_time: '23:00:00',
         status: 'pending',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -38,7 +38,7 @@ module.exports = {
         user_id: 2,
         table_id: 5, // Standard Table in Club 2 (Brooklyn Beats)
         booking_date: '2025-05-10',
-        booking_time: '20:30:00',
+        booking_time: '22:30:00',
         status: 'confirmed',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -46,7 +46,7 @@ module.exports = {
       {
         user_id: 2,
         table_id: 15, // Exclusive Table in Club 5 (Hudson Heat)
-        booking_date: '2025-08-18',
+        booking_date: '2025-08-15',
         booking_time: '22:00:00',
         status: 'canceled',
         createdAt: new Date(),
@@ -56,8 +56,8 @@ module.exports = {
       {
         user_id: 3,
         table_id: 37, // VIP Table in Club 13 (Hollywood Hype)
-        booking_date: '2025-04-15',
-        booking_time: '20:00:00',
+        booking_date: '2025-04-11',
+        booking_time: '23:30:00',
         status: 'confirmed',
         createdAt: new Date(),
         updatedAt: new Date(),
