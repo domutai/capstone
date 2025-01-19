@@ -28,6 +28,7 @@ router.get('/:clubId/reviews', async (req, res) => {
         model: User,
         attributes: ['id', 'first_name', 'last_name'], // Include user details
       },
+      order: [['createdAt', 'DESC']], // Order by most recent
     });
 
     if (reviews.length === 0) {
@@ -61,12 +62,39 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Add a new review to a club
+// // Add a new review to a club
+// router.post('/:clubId/reviews', async (req, res) => {
+//   try {
+//     const { clubId } = req.params;
+//     const { rating, review_text } = req.body;
+//     const userId = req.user.id; 
+
+//     // Check if the club exists
+//     const club = await Club.findByPk(clubId);
+//     if (!club) {
+//       return res.status(404).json({ error: 'Club not found.' });
+//     }
+
+//     // Create the review
+//     const newReview = await Review.create({
+//       user_id: userId,
+//       club_id: clubId,
+//       rating,
+//       review_text,
+//     });
+
+//     res.status(201).json(newReview);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Failed to add review to the club.' });
+//   }
+// });
+
+// Add a new review to a club FOR Frontend
 router.post('/:clubId/reviews', async (req, res) => {
   try {
     const { clubId } = req.params;
     const { rating, review_text } = req.body;
-    const userId = req.user.id; // Assuming user is authenticated
+    const userId = req.user.id;
 
     // Check if the club exists
     const club = await Club.findByPk(clubId);
@@ -82,11 +110,21 @@ router.post('/:clubId/reviews', async (req, res) => {
       review_text,
     });
 
-    res.status(201).json(newReview);
+    // Retrieve the newly created review with the associated User data
+    const createdReview = await Review.findByPk(newReview.id, {
+      include: {
+        model: User,
+        attributes: ['id', 'first_name', 'last_name'], // Include only necessary fields
+      },
+    });
+
+    res.status(201).json(createdReview);
   } catch (error) {
+    console.error('Error creating review:', error);
     res.status(500).json({ error: 'Failed to add review to the club.' });
   }
 });
+
 
 // Update an existing review
 router.put('/:id', isReviewOwner, async (req, res) => {

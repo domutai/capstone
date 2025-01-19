@@ -19,8 +19,8 @@ const ReviewModal = ({ onClose, onSubmit }) => {
     }
 
     try {
-    // Pass the review and stars back to the parent component
-    await onSubmit({ review, stars });
+      await onSubmit({ review_text: review, rating: stars });
+
 
     // Reset the modal state and close
     setReview('');
