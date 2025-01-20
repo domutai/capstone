@@ -219,7 +219,7 @@ const ManageClubs = () => {
   };
 
 
-  const handleSaveChanges = async (updatedClub) => {
+  const handleSaveChanges = async () => {
     try {
       await fetch(`/api/clubs/owned`)
         .then((res) => res.json())

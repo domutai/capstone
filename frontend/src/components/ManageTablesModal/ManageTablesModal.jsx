@@ -299,7 +299,7 @@ const ManageTablesModal = ({ club, onClose }) => {
   });
   const [errors, setErrors] = useState({});
   const [editingTable, setEditingTable] = useState(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [/*isEditModalOpen,*/ setIsEditModalOpen] = useState(false);
 
 
 
