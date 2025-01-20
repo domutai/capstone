@@ -8,6 +8,7 @@ import LandingPage from './components/LandingPage';
 import Homepage from './components/Homepage';
 import ClubDetails from './components/ClubDetails';
 import MyBookings from './components/MyBookings';
+import ManageClubs from './components/ManageClubs';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
         path: '/bookings',
         element: <MyBookings />
       },
+      {
+        path: "/manage-clubs",
+        element: <ManageClubs />
+      }
     ]
   }
 ]);

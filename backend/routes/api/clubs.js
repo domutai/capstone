@@ -190,6 +190,120 @@ router.get('/', async (req, res) => {
 //   }
 // });
 
+// Get all clubs owned by the logged-in owner
+router.get('/owned', isOwner, async (req, res) => {
+  try {
+    const owner_id = req.user.id;  // Ensure req.user is populated correctly
+    
+
+    const clubs = await Club.findAll({
+      where: { owner_id },  // Filtering clubs by the logged-in owner ID
+      attributes: [
+        'id',
+        'name',
+        'location',
+        'main_image_url',
+        'table_map_url',  // Make sure this field is included
+        'description',
+        [
+          Sequelize.fn('COALESCE', Sequelize.fn('AVG', Sequelize.col('Reviews.rating')), 0), 'avg_rating'
+        ],
+        [
+          Sequelize.fn('COALESCE', Sequelize.fn('COUNT', Sequelize.col('Reviews.id')), 0), 'review_count'
+        ],
+        [
+          Sequelize.fn('COALESCE', Sequelize.fn('MIN', Sequelize.col('Tables.price')), 0), 'min_price'
+        ],
+        [
+          Sequelize.fn('COALESCE', Sequelize.fn('MAX', Sequelize.col('Tables.price')), 0), 'max_price'
+        ],
+      ],
+      include: [
+        {
+          model: ClubImage,
+          attributes: ['id', 'image_url'],
+        },
+        {
+          model: Review,
+          attributes: [],
+        },
+        {
+          model: Table,
+          attributes: [],
+        },
+      ],
+      group: ['Club.id', 'ClubImages.id'],
+    });
+
+    res.json(clubs);
+  } catch (error) {
+    console.error('Error fetching owned clubs:', error);
+    res.status(500).json({ error: 'Failed to fetch owned clubs.' });
+  }
+});
+
+// Update an existing club BUT WITH DETAILS FOR FRONTEND
+router.put('/:id', isOwner, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, location, description, main_image_url, table_map_url, club_images } = req.body;
+    const owner_id = req.user.id;
+
+    // Find the club belonging to the owner
+    const club = await Club.findOne({ where: { id, owner_id } });
+    if (!club) {
+      return res.status(404).json({ error: 'Club not found or not owned by you.' });
+    }
+
+    // Update club details
+    await club.update({ name, location, description, main_image_url, table_map_url });
+
+    // Ensure that images are valid before updating
+    const validImages = club_images.filter(img => img.trim() !== '');
+    
+    if (validImages.length > 0) {
+      // Remove old images
+      await ClubImage.destroy({ where: { club_id: id } });
+
+      // Insert new images with valid URLs
+      await ClubImage.bulkCreate(
+        validImages.map((img) => ({
+          club_id: id,
+          image_url: img.trim(),  // Ensure no empty strings
+        }))
+      );
+    }
+
+    // Fetch updated club details with correct aggregation
+    const updatedClub = await Club.findByPk(id, {
+      attributes: [
+        'id',
+        'name',
+        'location',
+        'description',
+        'main_image_url',
+        'table_map_url',
+        [Sequelize.fn('COALESCE', Sequelize.fn('AVG', Sequelize.col('Reviews.rating')), 0), 'avg_rating'],
+        [Sequelize.fn('COALESCE', Sequelize.fn('MIN', Sequelize.col('Tables.price')), 0), 'min_price'],
+        [Sequelize.fn('COALESCE', Sequelize.fn('MAX', Sequelize.col('Tables.price')), 0), 'max_price'],
+      ],
+      include: [
+        { model: Review, attributes: [] },
+        { model: Table, attributes: [] },
+        { model: ClubImage, attributes: ['image_url'] },  // Include images
+      ],
+      group: ['Club.id', 'ClubImages.id'],
+    });
+
+    res.json(updatedClub);
+  } catch (error) {
+    console.error('Error updating club:', error);
+    res.status(500).json({ error: 'Failed to update club.' });
+  }
+});
+
+
+
 //Get specific club frontend details page
 router.get('/:id', async (req, res) => {
   try {
@@ -276,23 +390,24 @@ router.post('/', isOwner, async (req, res) => {
 });
 
 // Update an existing club (owners only)
-router.put('/:id', isOwner, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, location, description, main_image_url, table_map_url } = req.body;
-    const owner_id = req.user.id;
+// router.put('/:id', isOwner, async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { name, location, description, main_image_url, table_map_url } = req.body;
+//     const owner_id = req.user.id;
 
-    const club = await Club.findOne({ where: { id, owner_id } });
-    if (!club) {
-      return res.status(404).json({ error: 'Club not found or not owned by you.' });
-    }
+//     const club = await Club.findOne({ where: { id, owner_id } });
+//     if (!club) {
+//       return res.status(404).json({ error: 'Club not found or not owned by you.' });
+//     }
 
-    await club.update({ name, location, description, main_image_url, table_map_url });
-    res.json(club);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to update club.' });
-  }
-});
+//     await club.update({ name, location, description, main_image_url, table_map_url });
+//     res.json(club);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Failed to update club.' });
+//   }
+// });
+
 
 // Delete a club (owners only)
 router.delete('/:id', isOwner, async (req, res) => {
