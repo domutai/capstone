@@ -1,4 +1,4 @@
-.club-actions {
+/* .club-actions {
     display: flex;
     justify-content: space-between;
     margin-top: 10px;
@@ -21,4 +21,46 @@
     background-color: #f44336;
     color: white;
   }
+   */
+
+   .club-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Adds space between button groups */
+  }
+  
+  .club-actions .button-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .edit-button,
+  .delete-button,
+  .table-button {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+  }
+  
+  .edit-button {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .delete-button {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .table-button {
+    background-color: #3498db;
+    color: white;
+    width: 100%;
+  }
+  
   
