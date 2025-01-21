@@ -848,7 +848,8 @@ const ClubDetails = () => {
             <div className="average-rating">
               {reviews.length > 0 ? (
                 <>
-                  <span>⭐</span> <span>{club.avg_rating?.toFixed(2)}</span>
+                  {/*<span>⭐</span> <span>{club.avg_rating?.toFixed(2)}</span>*/}
+                  <span>⭐ {typeof club.avg_rating === 'number' ? club.avg_rating.toFixed(2) : 'N/A'}</span>
                   <p>CLUB HAS {reviews.length} {reviews.length === 1 ? 'REVIEW' : 'REVIEWS'}</p>
                   {user && !hasUserWrittenReview() && (
             <button
