@@ -447,11 +447,37 @@ router.get('/:id', async (req, res) => {
 
 
 // Create a new club (owners only)
+// router.post('/', isOwner, async (req, res) => {
+//   try {
+//     const { name, location, description, main_image_url, table_map_url } = req.body;
+//     const owner_id = req.user.id; 
+
+//     const newClub = await Club.create({
+//       owner_id,
+//       name,
+//       location,
+//       description,
+//       main_image_url,
+//       table_map_url,
+//     });
+//     res.status(201).json(newClub);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Failed to create club.' });
+//   }
+// });
+
+// Create a new club (owners only) WITH IMAGES
 router.post('/', isOwner, async (req, res) => {
   try {
-    const { name, location, description, main_image_url, table_map_url } = req.body;
+    const { name, location, description, main_image_url, table_map_url, club_images } = req.body;
     const owner_id = req.user.id; 
 
+    // Validate club images presence
+    if (!Array.isArray(club_images) || club_images.length === 0) {
+      return res.status(400).json({ error: 'Club images are required.' });
+    }
+
+    // Create the new club
     const newClub = await Club.create({
       owner_id,
       name,
@@ -460,11 +486,34 @@ router.post('/', isOwner, async (req, res) => {
       main_image_url,
       table_map_url,
     });
-    res.status(201).json(newClub);
+
+    // Store club images linked to the new club
+    await Promise.all(
+      club_images.map((img) => 
+        ClubImage.create({
+          club_id: newClub.id,
+          image_url: img.trim(),
+        })
+      )
+    );
+
+    // Fetch the club with its newly added images
+    const createdClub = await Club.findByPk(newClub.id, {
+      include: [
+        {
+          model: ClubImage,
+          attributes: ['image_url'],
+        },
+      ],
+    });
+
+    res.status(201).json(createdClub);
   } catch (error) {
+    console.error('Error creating club:', error);
     res.status(500).json({ error: 'Failed to create club.' });
   }
 });
+
 
 // Update an existing club (owners only)
 // router.put('/:id', isOwner, async (req, res) => {

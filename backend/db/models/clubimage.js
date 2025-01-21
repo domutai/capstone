@@ -1,5 +1,5 @@
 // models/ClubImage.js
-DEVELOPMENT
+//DEVELOPMENT
 
 module.exports = (sequelize, DataTypes) => {
   const ClubImage = sequelize.define('ClubImage', {

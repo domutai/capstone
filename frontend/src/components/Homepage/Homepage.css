@@ -81,3 +81,12 @@
     color: #555;
     font-size: 0.85rem;
 }
+
+.new-club-badge {
+  background-color: #ffc107;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-weight: bold;
+  margin-left: 10px;
+}

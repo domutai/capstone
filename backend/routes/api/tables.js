@@ -18,6 +18,36 @@ const isClubOwner = async (req, res, next) => {
   }
 };
 
+//Fast refresh on frontend after table edits
+const updateClubPriceRange = async (clubId) => {
+  try {
+    const tables = await Table.findAll({
+      where: { club_id: clubId },
+      attributes: ['price'],
+    });
+
+    if (tables.length > 0) {
+      const prices = tables.map((table) => parseFloat(table.price));
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+
+      await Club.update(
+        { min_price: minPrice, max_price: maxPrice },
+        { where: { id: clubId } }
+      );
+    } else {
+      // If no tables left, reset the min and max prices
+      await Club.update(
+        { min_price: null, max_price: null },
+        { where: { id: clubId } }
+      );
+    }
+  } catch (error) {
+    console.error('Error updating club price range:', error);
+  }
+};
+
+
 // Get all tables for a specific club FIXING RENDER ISSUE
 router.get('/:clubId/tables', async (req, res) => {
   try {
@@ -94,6 +124,9 @@ router.post('/:clubId/tables', isClubOwner, async (req, res) => {
       image_url,
     });
 
+    await updateClubPriceRange(clubId);  // Update club price range
+
+
     res.status(201).json(newTable);
   } catch (error) {
     res.status(500).json({ error: 'Failed to add table to the club.' });
@@ -118,6 +151,9 @@ router.put('/:id', async (req, res) => {
     }
 
     await table.update({ table_name, price, capacity, image_url });
+
+    await updateClubPriceRange(table.club_id);  // Update club price range
+
     res.json(table);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update table.' });
@@ -141,6 +177,9 @@ router.delete('/:id', async (req, res) => {
     }
 
     await table.destroy();
+
+    await updateClubPriceRange(table.club_id);  // Update club price range
+
     res.json({ message: 'Table deleted successfully.' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete table.' });

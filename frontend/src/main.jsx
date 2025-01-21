@@ -2,13 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom/client'; 
 import { Provider } from 'react-redux';
 import App from './App';
-import './index.css';
+//import './index.css';
 import store from './store';
 
 import { restoreCSRF, csrfFetch } from './store/csrf';
 
 import * as sessionActions from './store/session'; 
 import { Modal, ModalProvider } from './context/Modal';
+
+import { ClubProvider } from './context/ClubContext';
+
 
 
 if (import.meta.env.MODE !== 'production') {
@@ -24,7 +27,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ModalProvider>
     <Provider store={store}>
+      <ClubProvider>
       <App />
+      </ClubProvider>
       <Modal />
     </Provider>
     </ModalProvider>
