@@ -170,10 +170,8 @@ const ClubDetails = () => {
 
   const handleBooking = async () => {
     if (selectedTable && selectedDate) {
-      // Create a new Date object to prevent mutation
       const adjustedDate = new Date(selectedDate.getTime());
   
-      // Format the adjustedDate without applying UTC conversion
       const bookingDate = adjustedDate.toLocaleDateString('en-CA'); // YYYY-MM-DD format
       const bookingTime = adjustedDate.toLocaleTimeString('en-GB', { hour12: false }); // HH:MM:SS format
   
@@ -184,20 +182,18 @@ const ClubDetails = () => {
       };
   
       try {
-        // Step 1: Fetch CSRF token
         const csrfResponse = await fetch('/api/csrf/restore', { method: 'GET' });
         const csrfData = await csrfResponse.json();
         const csrfToken = csrfData['XSRF-Token'];
   
-        // Step 2: Send booking request
         const response = await fetch('/api/bookings', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-Token': csrfToken, // Include CSRF token
+            'X-CSRF-Token': csrfToken,
           },
-          credentials: 'include', // Include cookies
-          body: JSON.stringify(bookingData), // Send booking data
+          credentials: 'include',
+          body: JSON.stringify(bookingData),
         });
   
         if (response.ok) {
@@ -206,10 +202,13 @@ const ClubDetails = () => {
           console.log('Booking created:', result);
         } else {
           const errorData = await response.json();
-          if (errorData.message.includes('already booked')) {
+          console.error('Server Error Response:', errorData);
+  
+          // Check for specific error messages from the server response
+          if (errorData?.message?.toLowerCase().includes('already booked')) {
             alert("You've already booked this table for the same day!");
           } else {
-            throw new Error(errorData.message || 'Failed to make a booking.');
+            alert(errorData.message || 'Failed to make a booking.');
           }
         }
       } catch (err) {
@@ -219,7 +218,7 @@ const ClubDetails = () => {
     } else {
       alert('Please select a table and date.');
     }
-  };
+  };  
   
   
   const renderStars = (rating) => {
