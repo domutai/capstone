@@ -4,9 +4,9 @@ import './ReviewModal.css';
 const ReviewModal = ({ onClose, onSubmit }) => {
   const [review, setReview] = useState('');
   const [stars, setStars] = useState(0);
-  const [hoveredStars, setHoveredStars] = useState(0); // Added for hover functionality
+  const [hoveredStars, setHoveredStars] = useState(0); 
   const [errors, setErrors] = useState({});
-  const [backendError, setBackendError] = useState(''); // Backend error state
+  const [backendError, setBackendError] = useState(''); 
 
   const handleSubmit = async () => {
     const validationErrors = {};
@@ -22,14 +22,12 @@ const ReviewModal = ({ onClose, onSubmit }) => {
       await onSubmit({ review_text: review, rating: stars });
 
 
-    // Reset the modal state and close
     setReview('');
     setStars(0);
     setErrors({});
     setBackendError('');
     onClose();
 } catch (error) {
-    // Capture and display backend errors
     setBackendError(error.message || 'An unexpected error occurred.');
 }
   };
@@ -53,9 +51,9 @@ const ReviewModal = ({ onClose, onSubmit }) => {
             <span
               key={star}
               className={hoveredStars >= star || stars >= star ? 'star filled' : 'star'}
-              onClick={() => setStars(star)} // Set permanent stars
-              onMouseEnter={() => setHoveredStars(star)} // Hover state
-              onMouseLeave={() => setHoveredStars(0)} // Reset hover state
+              onClick={() => setStars(star)} 
+              onMouseEnter={() => setHoveredStars(star)} 
+              onMouseLeave={() => setHoveredStars(0)} 
             >
               ★
             </span>

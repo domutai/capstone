@@ -2,7 +2,7 @@
    .club-actions {
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Adds space between button groups */
+    gap: 10px; 
   }
   
   .club-actions .button-group {

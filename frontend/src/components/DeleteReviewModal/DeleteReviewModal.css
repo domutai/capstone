@@ -49,7 +49,6 @@
     text-align: center;
 }
 
-/* Delete button styles */
 .modal-actions .delete-button {
     background-color: #ff385c;
     color: white;
@@ -59,7 +58,6 @@
     background-color: #e63950;
 }
 
-/* Cancel button styles */
 .modal-actions .cancel-button {
     background-color: #ccc;
     color: #333;

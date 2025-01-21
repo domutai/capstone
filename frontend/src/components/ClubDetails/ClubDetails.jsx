@@ -120,58 +120,12 @@ const ClubDetails = () => {
     setSelectedTable(table);
   };
 
-  // const handleBooking = async () => {
-  //   if (selectedTable && selectedDate) {
-  //     // Create a new Date object to prevent mutation
-  //     const adjustedDate = new Date(selectedDate.getTime());
-  
-  //     // Format the adjustedDate without applying UTC conversion
-  //     const bookingDate = adjustedDate.toLocaleDateString('en-CA'); // YYYY-MM-DD format
-  //     const bookingTime = adjustedDate.toLocaleTimeString('en-GB', { hour12: false }); // HH:MM:SS format
-  
-  //     const bookingData = {
-  //       table_id: selectedTable.id,
-  //       booking_date: bookingDate,
-  //       booking_time: bookingTime,
-  //     };
-  
-  //     try {
-  //       // Step 1: Fetch CSRF token
-  //       const csrfResponse = await fetch('/api/csrf/restore', { method: 'GET' });
-  //       const csrfData = await csrfResponse.json();
-  //       const csrfToken = csrfData['XSRF-Token'];
-  
-  //       // Step 2: Send booking request
-  //       const response = await fetch('/api/bookings', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           'X-CSRF-Token': csrfToken, // Include CSRF token
-  //         },
-  //         credentials: 'include', // Include cookies
-  //         body: JSON.stringify(bookingData), // Send booking data
-  //       });
-  
-  //       if (!response.ok) {
-  //         throw new Error('Failed to make a booking.');
-  //       }
-  
-  //       const result = await response.json();
-  //       alert('Booking successful!');
-  //       console.log('Booking created:', result);
-  //     } catch (err) {
-  //       console.error('Error making booking:', err);
-  //       alert('Something went wrong. Please try again.');
-  //     }
-  //   } else {
-  //     alert('Please select a table and date.');
-  //   }
-  // };
-
   const handleBooking = async () => {
     if (selectedTable && selectedDate) {
+      // Create a new Date object to prevent mutation
       const adjustedDate = new Date(selectedDate.getTime());
   
+      // Format the adjustedDate without applying UTC conversion
       const bookingDate = adjustedDate.toLocaleDateString('en-CA'); // YYYY-MM-DD format
       const bookingTime = adjustedDate.toLocaleTimeString('en-GB', { hour12: false }); // HH:MM:SS format
   
@@ -182,35 +136,29 @@ const ClubDetails = () => {
       };
   
       try {
+        // Step 1: Fetch CSRF token
         const csrfResponse = await fetch('/api/csrf/restore', { method: 'GET' });
         const csrfData = await csrfResponse.json();
         const csrfToken = csrfData['XSRF-Token'];
   
+        // Step 2: Send booking request
         const response = await fetch('/api/bookings', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-Token': csrfToken,
+            'X-CSRF-Token': csrfToken, // Include CSRF token
           },
-          credentials: 'include',
-          body: JSON.stringify(bookingData),
+          credentials: 'include', // Include cookies
+          body: JSON.stringify(bookingData), // Send booking data
         });
   
-        if (response.ok) {
-          const result = await response.json();
-          alert('Booking successful!');
-          console.log('Booking created:', result);
-        } else {
-          const errorData = await response.json();
-          console.error('Server Error Response:', errorData);
-  
-          // Check for specific error messages from the server response
-          if (errorData?.message?.toLowerCase().includes('already booked')) {
-            alert("You've already booked this table for the same day!");
-          } else {
-            alert(errorData.message || 'Failed to make a booking.');
-          }
+        if (!response.ok) {
+          throw new Error('Failed to make a booking.');
         }
+  
+        const result = await response.json();
+        alert('Booking successful!');
+        console.log('Booking created:', result);
       } catch (err) {
         console.error('Error making booking:', err);
         alert('Something went wrong. Please try again.');
@@ -218,8 +166,7 @@ const ClubDetails = () => {
     } else {
       alert('Please select a table and date.');
     }
-  };  
-  
+  };
   
   const renderStars = (rating) => {
     const stars = [];

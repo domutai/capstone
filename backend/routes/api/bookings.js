@@ -5,8 +5,7 @@ const router = express.Router();
 // Middleware to check if the user owns a booking
 const isBookingOwner = async (req, res, next) => {
   const { id } = req.params;
-  const userId = req.user.id; // Assuming user is authenticated and added to req.user
-
+  const userId = req.user.id; 
   try {
     const booking = await Booking.findByPk(id);
     if (!booking || booking.user_id !== userId) {
@@ -18,42 +17,20 @@ const isBookingOwner = async (req, res, next) => {
   }
 };
 
-// Get all bookings for the logged-in user
-// router.get('/', async (req, res) => {
-//   try {
-//     const userId = req.user.id; // Assuming user is authenticated
-//     const bookings = await Booking.findAll({
-//       where: { user_id: userId },
-//       include: [
-//         {
-//           model: Table,
-//           attributes: ['id', 'table_name', 'price', 'capacity', 'club_id'],
-//           include: {
-//             model: Club,
-//             attributes: ['id', 'name', 'location'],
-//           },
-//         },
-//       ],
-//     });
-//     res.json(bookings);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Failed to fetch bookings.' });
-//   }
-// });
 
 // Get all bookings for the logged-in user (MY BOOKINGS FRONTEND)
 router.get('/', async (req, res) => {
   try {
-    const userId = req.user.id; // Assuming user is authenticated
+    const userId = req.user.id; 
     const bookings = await Booking.findAll({
       where: { user_id: userId },
       include: [
         {
           model: Table,
-          attributes: ['id', 'table_name', 'price', 'capacity', 'image_url', 'club_id'], // Ensure 'image_url' is included
+          attributes: ['id', 'table_name', 'price', 'capacity', 'image_url', 'club_id'], 
           include: {
             model: Club,
-            attributes: ['id', 'name', 'location', 'main_image_url'], // Include 'main_image_url' if needed
+            attributes: ['id', 'name', 'location', 'main_image_url'], 
           },
         },
       ],
@@ -67,7 +44,7 @@ router.get('/', async (req, res) => {
         name: booking.Table.table_name,
         price: booking.Table.price,
         capacity: booking.Table.capacity,
-        image_url: booking.Table.image_url, // Table image
+        image_url: booking.Table.image_url, 
       },
       club: {
         id: booking.Table.Club.id,
@@ -114,32 +91,6 @@ router.get('/:id', isBookingOwner, async (req, res) => {
   }
 });
 
-// Create a new booking
-// router.post('/', async (req, res) => {
-//   try {
-//     const { table_id, booking_date, booking_time } = req.body;
-//     const userId = req.user.id; // Assuming user is authenticated
-
-//     // Check if the table exists
-//     const table = await Table.findByPk(table_id);
-//     if (!table) {
-//       return res.status(404).json({ error: 'Table not found.' });
-//     }
-
-//     // Create the booking
-//     const newBooking = await Booking.create({
-//       user_id: userId,
-//       table_id,
-//       booking_date,
-//       booking_time,
-//       status: 'pending', // Default status
-//     });
-
-//     res.status(201).json(newBooking);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Failed to create booking.' });
-//   }
-// });
 
 // Create a new booking (no repeats)
 router.post('/', async (req, res) => {
@@ -171,7 +122,7 @@ router.post('/', async (req, res) => {
       table_id,
       booking_date,
       booking_time,
-      status: 'pending', // Default status
+      status: 'pending', 
     });
 
     res.status(201).json(newBooking);

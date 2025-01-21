@@ -1,27 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
-import { useClubs } from '../../context/ClubContext';  // Import the context hook
+import { useClubs } from '../../context/ClubContext';  
 import './Homepage.css';
 
 const Homepage = () => {
-  const { clubs, setClubs } = useClubs();  // Use global state from context
+  const { clubs, setClubs } = useClubs();  
   const [selectedCity, setSelectedCity] = useState('New York City');
   const navigate = useNavigate(); 
 
-  
-  // Check authentication status on component mount
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/session');  // Assuming this endpoint returns user session info
+        const response = await fetch('/api/session');  
         const data = await response.json();
         
         if (!data.user) {
-          navigate('/');  // Redirect if not logged in
+          navigate('/');  
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
-        navigate('/');  // Redirect in case of error
+        navigate('/');  
       }
     };
 
@@ -29,7 +28,6 @@ const Homepage = () => {
   }, [navigate]);
 
 
-  //Fetch clubs whenever the selected city changes
   useEffect(() => {
     fetch(`/api/clubs?major_city=${encodeURIComponent(selectedCity)}`)
       .then((res) => res.json())
@@ -42,9 +40,8 @@ const Homepage = () => {
     setSelectedCity(e.target.value);
   };
 
-  // Handle navigation to ClubDetails page
   const handleCardClick = (id) => {
-    navigate(`/club/${id}`); // Navigate to /club/:id when a club card is clicked
+    navigate(`/club/${id}`); 
   };
 
   return (
@@ -62,8 +59,8 @@ const Homepage = () => {
           <div
             key={club.id}
             className="club-card"
-            onClick={() => handleCardClick(club.id)} // Add onClick to navigate to ClubDetails
-            style={{ cursor: 'pointer' }} // Add pointer cursor for interactivity
+            onClick={() => handleCardClick(club.id)} 
+            style={{ cursor: 'pointer' }} 
           >
             <img
               src={club.main_image_url}

@@ -79,7 +79,7 @@ const EditClubModal = ({ club, onClose, onSave }) => {
       table_map_url: club.table_map_url ?? '',
       club_images: club.ClubImages?.length > 0 
         ? club.ClubImages.map(img => img.image_url) 
-        : ['', '', ''],  // Ensure three input fields
+        : ['', '', ''],  
     });
   
     const [errors, setErrors] = useState({});

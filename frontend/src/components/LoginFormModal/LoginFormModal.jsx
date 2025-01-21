@@ -6,18 +6,17 @@ import './LoginForm.css';
 
 function LoginFormModal() {
   const dispatch = useDispatch();
-  const [email, setEmail] = useState(""); // Changed from `credential` to `email`
+  const [email, setEmail] = useState(""); 
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [isDisabled, setIsDisabled] = useState(true);
   const { closeModal } = useModal();
 
-  // Effect to enable button when form is valid
   useEffect(() => {
     if (email.length >= 4 && password.length >= 6) {
-      setIsDisabled(false); // Enable button if both fields are valid
+      setIsDisabled(false); 
     } else {
-      setIsDisabled(true); // Disable button otherwise
+      setIsDisabled(true); 
     }
   }, [email, password]);
 
@@ -25,9 +24,9 @@ function LoginFormModal() {
     e.preventDefault();
     setErrors({});
     try {
-      await dispatch(sessionActions.login({ email, password })); // Use `email` here
+      await dispatch(sessionActions.login({ email, password })); 
       closeModal();
-      window.location = '/clubs'; // Redirect to the homepage after login
+      window.location = '/clubs'; 
     } catch (res) {
       const data = await res.json();
       if (data && data.errors) {
@@ -36,15 +35,7 @@ function LoginFormModal() {
     }
   };
 
-  // const handleDemoLogin = async () => {
-  //   try {
-  //     await dispatch(sessionActions.login({ email: 'demoUser@test.com', password: 'password' }));
-  //     closeModal();
-  //     window.location = '/clubs'; 
-  //   } catch (err) {
-  //     console.error('Demo login failed:', err);
-  //   }
-  // };
+
 
   return (
     <>
@@ -57,7 +48,7 @@ function LoginFormModal() {
         <label>
           Email
           <input
-            type="email" // Changed to email for better semantic validation
+            type="email" 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -76,9 +67,6 @@ function LoginFormModal() {
           Log In
         </button>
       </form>
-      {/* <button className="demo-user-btn" onClick={handleDemoLogin}>
-        Demo User
-      </button> */}
     </>
   );
 }

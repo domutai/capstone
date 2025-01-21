@@ -62,32 +62,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// // Add a new review to a club
-// router.post('/:clubId/reviews', async (req, res) => {
-//   try {
-//     const { clubId } = req.params;
-//     const { rating, review_text } = req.body;
-//     const userId = req.user.id; 
-
-//     // Check if the club exists
-//     const club = await Club.findByPk(clubId);
-//     if (!club) {
-//       return res.status(404).json({ error: 'Club not found.' });
-//     }
-
-//     // Create the review
-//     const newReview = await Review.create({
-//       user_id: userId,
-//       club_id: clubId,
-//       rating,
-//       review_text,
-//     });
-
-//     res.status(201).json(newReview);
-//   } catch (error) {
-//     res.status(500).json({ error: 'Failed to add review to the club.' });
-//   }
-// });
 
 // Add a new review to a club FOR Frontend
 router.post('/:clubId/reviews', async (req, res) => {

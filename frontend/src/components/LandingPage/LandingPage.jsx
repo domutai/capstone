@@ -12,21 +12,19 @@ const LandingPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { setModalContent, openModal } = useModal();
-  const user = useSelector((state) => state.session.user); // Access the logged-in user
+  const user = useSelector((state) => state.session.user); 
   const [audio] = useState(() => {
     const newAudio = new Audio(clubMusic);
-    newAudio.loop = true; // Enable looping
+    newAudio.loop = true; 
     return newAudio;
   });
   const [menuVisible, setMenuVisible] = useState(false);
   const [isFlashing, setIsFlashing] = useState(false);
 
-  // Fetch session data on component mount
   useEffect(() => {
-    dispatch(fetchSessionUser()); // Fetch session to ensure role is always up-to-date
+    dispatch(fetchSessionUser()); 
   }, [dispatch]);
 
-  // Redirect logged-in users to /clubs
   useEffect(() => {
     if (user) {
       navigate('/clubs');
@@ -37,7 +35,7 @@ const LandingPage = () => {
     setMenuVisible(!menuVisible);
 
     if (!isFlashing) {
-      setIsFlashing(true); // Start flashing effect
+      setIsFlashing(true); 
       audio.play()
         .then(() => console.log('Audio started playing'))
         .catch((err) => console.error('Error playing audio:', err));
@@ -48,8 +46,8 @@ const LandingPage = () => {
     try {
       const user = await dispatch(login({ email: 'demoUser@test.com', password: 'password' }));
       if (user) {
-        await dispatch(fetchSessionUser()); // Refresh session after login
-        navigate('/clubs'); // Redirect to the homepage
+        await dispatch(fetchSessionUser()); 
+        navigate('/clubs'); 
       }
     } catch (err) {
       console.error('Demo user login failed:', err);
@@ -60,8 +58,8 @@ const LandingPage = () => {
     try {
       const user = await dispatch(login({ email: 'demoOwner@test.com', password: 'password' }));
       if (user) {
-        await dispatch(fetchSessionUser()); // Refresh session after login
-        navigate('/clubs'); // Redirect to the homepage
+        await dispatch(fetchSessionUser()); 
+        navigate('/clubs'); 
       }
     } catch (err) {
       console.error('Demo owner login failed:', err);
@@ -78,11 +76,10 @@ const LandingPage = () => {
     openModal();
   };
 
-  // Stop the audio when the component unmounts
   useEffect(() => {
     return () => {
-      audio.pause(); // Stop the audio
-      audio.currentTime = 0; // Reset playback to the start
+      audio.pause(); 
+      audio.currentTime = 0; 
     };
   }, [audio]);
 

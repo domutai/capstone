@@ -3,57 +3,53 @@ import { useNavigate } from 'react-router-dom';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { setHours, setMinutes, isAfter } from 'date-fns';
-import '../Homepage/Homepage.css'; // Reuse the same CSS
+import '../Homepage/Homepage.css'; 
 import './MyBookings.css';
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [csrfToken, setCsrfToken] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showCancelModal, setShowCancelModal] = useState(false); // State for cancel modal
-  const [selectedBookingId, setSelectedBookingId] = useState(null); // Booking to edit/cancel
-  const [selectedDate, setSelectedDate] = useState(null); // New date for booking
+  const [showCancelModal, setShowCancelModal] = useState(false); 
+  const [selectedBookingId, setSelectedBookingId] = useState(null); 
+  const [selectedDate, setSelectedDate] = useState(null); 
   const navigate = useNavigate(); 
 
 
-  // Check authentication status on component mount
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/session');  // Assuming this endpoint returns user session info
+        const response = await fetch('/api/session');  
         const data = await response.json();
         
         if (!data.user) {
-          navigate('/');  // Redirect if not logged in
+          navigate('/');  
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
-        navigate('/');  // Redirect in case of error
+        navigate('/');  
       }
     };
 
     checkAuth();
   }, [navigate]);
 
-  // Function to ensure only future Fridays and Saturdays can be selected
   const isFutureFridayOrSaturday = (date) => {
     const today = new Date();
-    const day = date.getDay(); // 5 = Friday, 6 = Saturday
+    const day = date.getDay(); 
     return (day === 5 || day === 6) && isAfter(date, today);
   };
 
-  // Function to format the date as MM/DD/YYYY
   const formatDate = (date) => {
     const [year, month, day] = date.split('-');
-    return `${month}/${day}/${year}`; // Rearrange to MM/DD/YYYY
+    return `${month}/${day}/${year}`; 
   };
 
-  // Function to format the time as 12-hour AM/PM
   const formatTime = (time) => {
     const [hours, minutes] = time.split(':');
     const hour = parseInt(hours, 10);
     const ampm = hour >= 12 ? 'PM' : 'AM';
-    const formattedHour = hour % 12 || 12; // Convert 0 or 13+ hours to 12-hour format
+    const formattedHour = hour % 12 || 12; 
     return `${formattedHour}:${minutes} ${ampm}`;
   };
 
@@ -70,63 +66,18 @@ const MyBookings = () => {
       .catch((err) => console.error('Error fetching CSRF token:', err));
   }, []);
 
-  // Handle edit button click
   const handleEditClick = (id, currentDate) => {
     setSelectedBookingId(id);
-    setSelectedDate(new Date(currentDate)); // Set current booking date in the calendar
-    setShowEditModal(true); // Show edit modal
+    setSelectedDate(new Date(currentDate)); 
+    setShowEditModal(true); 
   };
 
-  // Handle cancel button click
   const handleCancelClick = (id) => {
-    setSelectedBookingId(id); // Set the booking ID to cancel
-    setShowCancelModal(true); // Show the confirmation modal
+    setSelectedBookingId(id); 
+    setShowCancelModal(true); 
   };
 
-  // Confirm and update the booking
-//   const handleConfirmEdit = async () => {
-//     if (!selectedDate) return;
-
-//     const updatedDate = new Date(selectedDate.getTime());
-//     const bookingDate = updatedDate.toLocaleDateString('en-CA'); // YYYY-MM-DD format
-//     const bookingTime = updatedDate.toLocaleTimeString('en-GB', { hour12: false }); // HH:MM:SS format
-
-//     try {
-//       const response = await fetch(`/api/bookings/${selectedBookingId}`, {
-//         method: 'PUT', // Use PUT for updating
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'X-CSRF-Token': csrfToken,
-//         },
-//         credentials: 'include',
-//         body: JSON.stringify({
-//           booking_date: bookingDate,
-//           booking_time: bookingTime,
-//         }),
-//       });
-
-//       if (response.ok) {
-//         // Update booking in state
-//         setBookings((prevBookings) =>
-//           prevBookings.map((booking) =>
-//             booking.id === selectedBookingId
-//               ? { ...booking, date: bookingDate, time: bookingTime }
-//               : booking
-//           )
-//         );
-//       } else {
-//         throw new Error('Failed to update booking.');
-//       }
-//     } catch (err) {
-//       console.error('Error updating booking:', err);
-//     } finally {
-//       setShowEditModal(false); // Close modal
-//       setSelectedBookingId(null);
-//       setSelectedDate(null);
-//     }
-//   };
-
-//edit to make sure changes to pending
+  
 const handleConfirmEdit = async () => {
     if (!selectedDate) return;
   
@@ -134,15 +85,13 @@ const handleConfirmEdit = async () => {
     const bookingDate = updatedDate.toLocaleDateString('en-CA'); // YYYY-MM-DD format
     const bookingTime = updatedDate.toLocaleTimeString('en-GB', { hour12: false }); // HH:MM:SS format
   
-    // Find the existing booking
     const existingBooking = bookings.find((booking) => booking.id === selectedBookingId);
   
-    // Check if the date has changed
     const dateChanged = bookingDate !== existingBooking.date;
   
     try {
       const response = await fetch(`/api/bookings/${selectedBookingId}`, {
-        method: 'PUT', // Use PUT for updating
+        method: 'PUT', 
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-Token': csrfToken,
@@ -151,12 +100,11 @@ const handleConfirmEdit = async () => {
         body: JSON.stringify({
           booking_date: bookingDate,
           booking_time: bookingTime,
-          status: dateChanged ? 'pending' : existingBooking.status, // Update status only if the date changed
+          status: dateChanged ? 'pending' : existingBooking.status, 
         }),
       });
   
       if (response.ok) {
-        // Update booking in state
         setBookings((prevBookings) =>
           prevBookings.map((booking) =>
             booking.id === selectedBookingId
@@ -164,7 +112,7 @@ const handleConfirmEdit = async () => {
                   ...booking,
                   date: bookingDate,
                   time: bookingTime,
-                  status: dateChanged ? 'pending' : booking.status, // Reflect status change in the UI
+                  status: dateChanged ? 'pending' : booking.status, 
                 }
               : booking
           )
@@ -175,27 +123,25 @@ const handleConfirmEdit = async () => {
     } catch (err) {
       console.error('Error updating booking:', err);
     } finally {
-      setShowEditModal(false); // Close modal
+      setShowEditModal(false); 
       setSelectedBookingId(null);
       setSelectedDate(null);
     }
   };
   
 
-  // Confirm cancellation
   const handleConfirmCancel = async () => {
     try {
       const response = await fetch(`/api/bookings/${selectedBookingId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-Token': csrfToken, // Include CSRF token
+          'X-CSRF-Token': csrfToken, 
         },
-        credentials: 'include', // Include cookies
+        credentials: 'include', 
       });
 
       if (response.ok) {
-        // Remove the cancelled booking from the state
         setBookings((prevBookings) =>
           prevBookings.filter((booking) => booking.id !== selectedBookingId)
         );
@@ -205,12 +151,11 @@ const handleConfirmEdit = async () => {
     } catch (err) {
       console.error('Error cancelling booking:', err);
     } finally {
-      setShowCancelModal(false); // Hide the modal
-      setSelectedBookingId(null); // Clear the selected booking ID
+      setShowCancelModal(false); 
+      setSelectedBookingId(null); 
     }
   };
 
-  // Close modals
   const handleCloseEditModal = () => {
     setShowEditModal(false);
     setSelectedBookingId(null);
@@ -238,7 +183,7 @@ const handleConfirmEdit = async () => {
           }}
           style={{ cursor: 'pointer' }}>
             <img
-              src={booking.table.image_url} // Use the table's image
+              src={booking.table.image_url} 
               alt={booking.table.name}
               className="club-image"
             />

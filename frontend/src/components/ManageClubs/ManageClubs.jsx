@@ -18,21 +18,20 @@ const ManageClubs = () => {
   const navigate = useNavigate(); 
 
 
-  // Check authentication status on component mount
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/session');  // Assuming this endpoint returns user session info
+        const response = await fetch('/api/session');  
         const data = await response.json();
         
         if (!data.user) {
-          navigate('/');  // Redirect if not logged in
+          navigate('/');  
         } else if (data.user.role === 'user') {
-          navigate('/clubs');  // Redirect non-owner users to /clubs
+          navigate('/clubs');  
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
-        navigate('/');  // Redirect in case of error
+        navigate('/');  
       }
     };
 
@@ -65,7 +64,7 @@ const ManageClubs = () => {
     try {
       const res = await fetch('/api/clubs/owned');
       const updatedClubs = await res.json();
-      setClubs(updatedClubs);  // Update the club list with new data
+      setClubs(updatedClubs);  
     } catch (error) {
       console.error('Error updating clubs:', error);
     }
@@ -84,7 +83,6 @@ const ManageClubs = () => {
   const confirmDelete = async () => {
     if (selectedClubId) {
       try {
-        // Fetch the CSRF token first
         const csrfResponse = await fetch('/api/csrf/restore', { method: 'GET' });
         const csrfData = await csrfResponse.json();
         const csrfToken = csrfData['XSRF-Token'];
