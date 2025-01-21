@@ -1,98 +1,102 @@
-@font-face {
-  font-family: 'Great Vibes';
-  src: url('/fonts/GreatVibes-Regular.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
+.navigation-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f8f8f8;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-  .navigation-container {
-    display: flex;
-    justify-content: space-between; /* Space between app name and profile button */
-    align-items: center; /* Vertically center content */
-    padding: 0 16px;
-    height: 60px; /* Optional: Set a height for the nav bar */
-    border-bottom: 2px solid #ddd;
-  }
 
-  .logo-link {
-    text-decoration: none; /* Remove underline */
-    color: inherit; /* Inherit text color */
-    display: block; /* Make the link span the whole card */
-  }
-  
-  /* Flexbox for app logo and name */
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
 .app-logo-name {
   display: flex;
-  align-items: center; /* Align logo and text vertically */
-  cursor: pointer;
+  align-items: center;  
+  gap: 10px;           
 }
 
-/* Icon styling */
 .app-logo {
-  height: 40px; /* Adjust size as needed */
-  width: 40px; /* Keep a square ratio */
-  margin-right: 8px; /* Add spacing between logo and app name */
+  width: 80px;         
+  height: auto;        
+  vertical-align: middle; 
+}
+
+.app-name {
+  font-size: 1.8rem;     
+  font-family: 'Great Vibes', cursive;
+  font-weight: bold;
+  color: gold;
+  display: flex;
+  align-items: center;
+  -webkit-text-stroke: .000001px black;
+}
+
+.navigation-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-icon {
+  margin-right: 5px;
+  color: #888;
+}
+
+.navigation-list {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navigation-item {
+  font-size: 16px;
+  color: #333;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+}
+
+.navigation-item:hover {
+  color: #000;
+}
+
+.profile-button-container {
+  display: flex;
+  align-items: center;
+}
+
+.logout-button,
+.nav-sign-in-button {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.logout-button:hover,
+.nav-sign-in-button:hover {
+  color: #000;
+}
+
+.profile-dropdown.hidden {
+  display: none;
+}
+
+.profile-dropdown li {
+  padding: 5px 10px;
   cursor: pointer;
 }
 
-  /* App name styles */
-  .app-name {
-    font-size: 1.5rem;
-    font-family: 'Great Vibes', cursive; /* Fancy font */
-    font-weight: bold;
-    color: gold;
-  }
-  
-  /* List styling for navigation items */
-  .navigation-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex; /* Flexbox for alignment */
-  }
-  
-  .navigation-item {
-    margin-left: auto; /* Ensures the item stays on the right */
-  }
-
-  /* Style for the "Create a New Spot" link */
-.navigation-list .create-new-spot {
-  margin-top: 8px; /* Moves this specific item down */
-  margin-right: 16px; /* Optional: add a little space to the right of the link */
-}
-
-/* Style for the "Create a New Spot" link */
-.navigation-list .create-new-spot a {
-  text-decoration: none; /* Remove the underline */
-  color: inherit; /* Optional: makes sure the text color is consistent with other links */
-}
-
-  
-  .profile-dropdown {
-    position: absolute;
-    top: 40px;
-    right: 0;
-    background-color: white;
-    border: 1px solid #ddd;
-    list-style-type: none;
-    padding: 10px;
-    margin: 0;
-  }
-  
-  .profile-dropdown.hidden {
-    display: none;
-  }
-  
-  .profile-dropdown li {
-    padding: 5px 10px;
-    cursor: pointer; 
-  }
-  
-  .profile-dropdown li button {
-    padding: 5px 10px;
-    cursor: pointer; 
-  }
-  
-  .profile-dropdown li:hover {
-    background-color: #f0f0f0;
-  }
-  
+.profile-dropdown li:hover {
+  background-color: #f0f0f0;
+} 

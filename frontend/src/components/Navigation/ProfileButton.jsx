@@ -1,5 +1,3 @@
-//Use OpenModelMenuItem
-//THIS WAS THE ONE USED BEFORE
 // import { useState, useEffect, useRef } from 'react';
 // import { useDispatch } from 'react-redux';
 // import { FaUserCircle } from 'react-icons/fa';
@@ -7,117 +5,18 @@
 // import OpenModalMenuItem from './OpenModalMenuItem';
 // import LoginFormModal from '../LoginFormModal';
 // import SignupFormModal from '../SignupFormModal';
-// import { useNavigate } from 'react-router-dom'; // Import useNavigate
-
-
-// function ProfileButton({ user }) {
-//   const dispatch = useDispatch();
-//   const navigate = useNavigate(); // Initialize useNavigate
-//   const [showMenu, setShowMenu] = useState(false);
-//   const ulRef = useRef();
-
-//   const toggleMenu = (e) => {
-//     e.stopPropagation(); // Keep from bubbling up to document and triggering closeMenu
-//     setShowMenu(!showMenu);
-//   };
-
-//   useEffect(() => {
-//     if (!showMenu) return;
-
-//     const closeMenu = (e) => {
-//       if (!ulRef.current.contains(e.target)) {
-//         setShowMenu(false);
-//       }
-//     };
-
-//     document.addEventListener('click', closeMenu);
-
-//     return () => document.removeEventListener("click", closeMenu);
-//   }, [showMenu]);
-
-//   const closeMenu = () => setShowMenu(false);
-
-//   const logout = (e) => {
-//     e.preventDefault();
-//     dispatch(sessionActions.logout());
-//     closeMenu();
-//     window.location = '/'; // Redirect to homepage
-//   };
-
-//   const goToManageSpots = () => {
-//     navigate('/spots/current'); // Navigate to Manage Spots page
-//     closeMenu(); // Close the menu after navigation
-//   };
-
-//   const goToManageReviews = () => {
-//     navigate('/reviews/current'); // Navigate to Manage Reviews page
-//     closeMenu(); // Close the menu after navigation
-//   };
-
-//   const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
-
-//   return (
-//     <>
-//       <button onClick={toggleMenu}>
-//         <FaUserCircle />
-//       </button>
-//       <ul className={ulClassName} ref={ulRef}>
-//         {user ? (
-//            <>
-//            <li>Hello, {user.firstName}</li>
-//            <li>{user.email}</li>
-//            <li>
-//              <button onClick={goToManageSpots}>Manage Spots</button>
-//            </li>
-//            <li>
-//               <button onClick={goToManageReviews}>Manage Reviews</button>
-//             </li>
-//            <li>
-//              <button onClick={logout}>Log Out</button>
-//            </li>
-//          </>
-//        ) : (
-//           <>
-//             <OpenModalMenuItem
-//               itemText="Log In"
-//               onItemClick={closeMenu}
-//               modalComponent={<LoginFormModal />}
-//             />
-//             <OpenModalMenuItem
-//               itemText="Sign Up"
-//               onItemClick={closeMenu}
-//               modalComponent={<SignupFormModal />}
-//             />
-//           </>
-//         )}
-//       </ul>
-//     </>
-//   );
-// }
-
-// export default ProfileButton;
-
-//MADE FOR CLUBS
-// import { useState, useEffect, useRef } from 'react';
-// import { useDispatch } from 'react-redux';
-// import { FaUserCircle } from 'react-icons/fa';
-// import * as sessionActions from '../../store/session';
-// import OpenModalMenuItem from './OpenModalMenuItem';
-// import LoginFormModal from '../LoginFormModal';
-// import SignupFormModal from '../SignupFormModal';
+// import CreateClubModal from '../CreateClubModal';  
 // import { useNavigate } from 'react-router-dom'; 
 
-// import CreateClubModal from '../CreateClubModal';
-
-
 // function ProfileButton({ user }) {
 //   const dispatch = useDispatch();
-//   const navigate = useNavigate(); 
+//   const navigate = useNavigate();
 //   const [showMenu, setShowMenu] = useState(false);
+//   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);  
 //   const ulRef = useRef();
 
 //   const toggleMenu = (e) => {
-//     e.stopPropagation(); 
+//     e.stopPropagation();
 //     setShowMenu(!showMenu);
 //   };
 
@@ -125,13 +24,12 @@
 //     if (!showMenu) return;
 
 //     const closeMenu = (e) => {
-//       if (!ulRef.current.contains(e.target)) {
+//       if (ulRef.current && !ulRef.current.contains(e.target)) {
 //         setShowMenu(false);
 //       }
 //     };
 
 //     document.addEventListener('click', closeMenu);
-
 //     return () => document.removeEventListener("click", closeMenu);
 //   }, [showMenu]);
 
@@ -141,19 +39,18 @@
 //     e.preventDefault();
 //     dispatch(sessionActions.logout());
 //     closeMenu();
-//     window.location = '/'; // Redirect to homepage
+//     window.location = '/';
 //   };
 
 //   const goMyBookings = () => {
-//     navigate('/bookings'); 
-//     closeMenu(); // Close the menu after navigation
+//     navigate('/bookings');
+//     closeMenu();
 //   };
 
 //   const goManageClubs = () => {
-//     navigate('/manage-clubs'); 
-//     closeMenu(); // Close the menu after navigation
+//     navigate('/manage-clubs');
+//     closeMenu();
 //   };
-
 
 //   const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
 
@@ -164,27 +61,27 @@
 //       </button>
 //       <ul className={ulClassName} ref={ulRef}>
 //         {user ? (
-//            <>
-//            <li>{user.firstName} {user.lastName}</li>
-//            <li>{user.email}</li>
-//            <li>
-//              <button onClick={goMyBookings}>My Bookings</button>
-//            </li>
-//            <li>
-//              <button onClick={goManageClubs}>Manage Clubs</button>
-//            </li>
-//            <li>
-//               <OpenModalMenuItem
-//                 itemText="Create Club"
-//                 onItemClick={closeMenu}
-//                 modalComponent={<CreateClubModal onClose={closeMenu} onSave={(newClub) => console.log('New club created:', newClub)} />}
-//               />
+//           <>
+//             <li>{user.firstName} {user.lastName}</li>
+//             <li>{user.email}</li>
+//             <li>
+//               <button onClick={goMyBookings}>My Bookings</button>
 //             </li>
-//            <li>
-//              <button onClick={logout}>Log Out</button>
-//            </li>
-//          </>
-//        ) : (
+//             {user.role === 'owner' && (
+//               <>
+//             <li>
+//               <button onClick={goManageClubs}>Manage Clubs</button>
+//             </li>
+//             <li>
+//               <button onClick={() => setIsCreateModalOpen(true)}>Create Club</button>
+//             </li>
+//             </>
+//           )}
+//             <li>
+//               <button onClick={logout}>Log Out</button>
+//             </li>
+//           </>
+//         ) : (
 //           <>
 //             <OpenModalMenuItem
 //               itemText="Log In"
@@ -199,13 +96,24 @@
 //           </>
 //         )}
 //       </ul>
+
+//       {/* Create Club Modal - Only renders when isCreateModalOpen is true */}
+//       {isCreateModalOpen && (
+//         <CreateClubModal 
+//           onClose={() => setIsCreateModalOpen(false)} 
+//           onSave={(newClub) => {
+//             console.log('New club created:', newClub);
+//             setIsCreateModalOpen(false);  // Close modal after saving
+//           }} 
+//         />
+//       )}
 //     </>
 //   );
 // }
 
 // export default ProfileButton;
 
-//AFTER ADDING CREATE CLUB MODALE
+//styled
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { FaUserCircle } from 'react-icons/fa';
@@ -213,14 +121,15 @@ import * as sessionActions from '../../store/session';
 import OpenModalMenuItem from './OpenModalMenuItem';
 import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
-import CreateClubModal from '../CreateClubModal';  // Import CreateClubModal
+import CreateClubModal from '../CreateClubModal';  
 import { useNavigate } from 'react-router-dom'; 
+import './ProfileButton.css';
 
 function ProfileButton({ user }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);  // State for Create Club modal
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);  
   const ulRef = useRef();
 
   const toggleMenu = (e) => {
@@ -260,64 +169,64 @@ function ProfileButton({ user }) {
     closeMenu();
   };
 
-  const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
-
   return (
-    <>
-      <button onClick={toggleMenu}>
+    <div className="profile-button-container">
+      <button onClick={toggleMenu} className="profile-icon">
         <FaUserCircle />
       </button>
-      <ul className={ulClassName} ref={ulRef}>
-        {user ? (
-          <>
-            <li>{user.firstName} {user.lastName}</li>
-            <li>{user.email}</li>
-            <li>
-              <button onClick={goMyBookings}>My Bookings</button>
-            </li>
-            {user.role === 'owner' && (
-              <>
-            <li>
-              <button onClick={goManageClubs}>Manage Clubs</button>
-            </li>
-            <li>
-              <button onClick={() => setIsCreateModalOpen(true)}>Create Club</button>
-            </li>
+      {showMenu && (
+        <ul className="profile-dropdown" ref={ulRef}>
+          {user ? (
+            <>
+              <li className="profile-info">
+                <p className="user-name">{user.firstName} {user.lastName}</p>
+                <p className="user-email">{user.email}</p>
+              </li>
+              <li>
+                <button onClick={goMyBookings} className="dropdown-button">My Bookings</button>
+              </li>
+              {user.role === 'owner' && (
+                <>
+                  <li>
+                    <button onClick={goManageClubs} className="dropdown-button">Manage Clubs</button>
+                  </li>
+                  <li>
+                    <button onClick={() => setIsCreateModalOpen(true)} className="dropdown-button">Create Club</button>
+                  </li>
+                </>
+              )}
+              <li>
+                <button onClick={logout} className="dropdown-button">Log Out</button>
+              </li>
+            </>
+          ) : (
+            <>
+              <OpenModalMenuItem
+                itemText="Log In"
+                onItemClick={closeMenu}
+                modalComponent={<LoginFormModal />}
+              />
+              <OpenModalMenuItem
+                itemText="Sign Up"
+                onItemClick={closeMenu}
+                modalComponent={<SignupFormModal />}
+              />
             </>
           )}
-            <li>
-              <button onClick={logout}>Log Out</button>
-            </li>
-          </>
-        ) : (
-          <>
-            <OpenModalMenuItem
-              itemText="Log In"
-              onItemClick={closeMenu}
-              modalComponent={<LoginFormModal />}
-            />
-            <OpenModalMenuItem
-              itemText="Sign Up"
-              onItemClick={closeMenu}
-              modalComponent={<SignupFormModal />}
-            />
-          </>
-        )}
-      </ul>
+        </ul>
+      )}
 
-      {/* Create Club Modal - Only renders when isCreateModalOpen is true */}
       {isCreateModalOpen && (
         <CreateClubModal 
           onClose={() => setIsCreateModalOpen(false)} 
           onSave={(newClub) => {
             console.log('New club created:', newClub);
-            setIsCreateModalOpen(false);  // Close modal after saving
+            setIsCreateModalOpen(false);
           }} 
         />
       )}
-    </>
+    </div>
   );
 }
 
 export default ProfileButton;
-

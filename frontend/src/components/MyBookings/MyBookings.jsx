@@ -231,8 +231,12 @@ const handleConfirmEdit = async () => {
       <div className="club-grid">
         {bookings.map((booking) => (
           <div key={booking.id} className="club-card"
-          onClick={() => navigate(`/club/${booking.club.id}`)}  // Navigate to club details
-          style={{ cursor: 'pointer' }}  >
+          onClick={(e) => {
+            if (!e.target.closest('button')) {
+              navigate(`/club/${booking.club.id}`);
+            }
+          }}
+          style={{ cursor: 'pointer' }}>
             <img
               src={booking.table.image_url} // Use the table's image
               alt={booking.table.name}

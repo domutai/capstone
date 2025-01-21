@@ -7,10 +7,10 @@ const DeleteReviewModal = ({ onClose, onDelete }) => {
         <h2>Confirm Delete</h2>
         <p>Are you sure you want to delete this review?</p>
         <div className="modal-actions">
-          <button className="delete-button" onClick={onDelete}>
+          <button className="action-button delete-button" onClick={onDelete}>
             Yes (Delete Review)
           </button>
-          <button className="cancel-button" onClick={onClose}>
+          <button className="action-button cancel-button" onClick={onClose}>
             No (Keep Review)
           </button>
         </div>

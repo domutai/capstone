@@ -14,6 +14,13 @@
     text-align: left;
     margin-bottom: 20px;
   }
+
+  .club-info-header p {
+    font-size: 1.2rem;
+    margin: 5px 0;
+    text-align: center; /* Centers the address */
+    color: black; /* Changes font color to black */
+}
   
   .club-info-header h1 {
     font-size: 2.5rem;
@@ -121,7 +128,14 @@
   
   .review p {
     margin: 5px 0;
+    color: black !important;
+
   }
+
+  .reviews p {
+    color: rgb(218, 63, 128);
+}
+  
   
   .write-review-btn {
     margin-left: 10px;
@@ -211,3 +225,11 @@
 .react-datepicker__time-list-item--disabled {
     display: none;
   }
+  .review-actions button:nth-child(2) {
+    background-color: red; /* Change to preferred color */
+    color: white; /* Change text color */
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}

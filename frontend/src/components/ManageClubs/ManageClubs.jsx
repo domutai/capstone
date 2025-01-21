@@ -136,8 +136,12 @@ const ManageClubs = () => {
       <div className="club-grid">
         {clubs.map((club) => (
           <div key={club.id} className="club-card"
-          onClick={() => navigate(`/club/${club.id}`)}  // Navigate to club details page
-          style={{ cursor: 'pointer' }}  // Change cursor to pointer
+          onClick={(e) => {
+            if (!e.target.closest('.club-actions button')) {
+              navigate(`/club/${club.id}`);
+            }
+          }}
+          style={{ cursor: 'pointer' }}
           >
             <img src={club.main_image_url} alt={club.name} className="club-image" />
             <div className="club-details">
