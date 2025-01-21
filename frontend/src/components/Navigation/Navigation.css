@@ -1,5 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
-
+@font-face {
+  font-family: 'Great Vibes';
+  src: url('/fonts/GreatVibes-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
   .navigation-container {
     display: flex;
     justify-content: space-between; /* Space between app name and profile button */
