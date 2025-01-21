@@ -36,15 +36,15 @@ function LoginFormModal() {
     }
   };
 
-  const handleDemoLogin = async () => {
-    try {
-      await dispatch(sessionActions.login({ email: 'demoUser@test.com', password: 'password' }));
-      closeModal();
-      window.location = '/clubs'; // Redirect to the homepage after demo login
-    } catch (err) {
-      console.error('Demo login failed:', err);
-    }
-  };
+  // const handleDemoLogin = async () => {
+  //   try {
+  //     await dispatch(sessionActions.login({ email: 'demoUser@test.com', password: 'password' }));
+  //     closeModal();
+  //     window.location = '/clubs'; 
+  //   } catch (err) {
+  //     console.error('Demo login failed:', err);
+  //   }
+  // };
 
   return (
     <>
@@ -76,9 +76,9 @@ function LoginFormModal() {
           Log In
         </button>
       </form>
-      <button className="demo-user-btn" onClick={handleDemoLogin}>
+      {/* <button className="demo-user-btn" onClick={handleDemoLogin}>
         Demo User
-      </button>
+      </button> */}
     </>
   );
 }
