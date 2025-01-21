@@ -18,7 +18,7 @@ const isClubOwner = async (req, res, next) => {
   }
 };
 
-// Get all tables for a specific club
+// Get all tables for a specific club FIXING RENDER ISSUE
 router.get('/:clubId/tables', async (req, res) => {
   try {
     const { clubId } = req.params;
@@ -31,11 +31,36 @@ router.get('/:clubId/tables', async (req, res) => {
       return res.status(404).json({ error: 'No tables found for this club.' });
     }
 
-    res.json(tables);
+    // Ensure price is always a number
+    const formattedTables = tables.map(table => ({
+      ...table.toJSON(),
+      price: Number(table.price) || 0  // Convert price to number or default to 0
+    }));
+
+    res.json(formattedTables);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch tables for the club.' });
   }
 });
+
+// Get all tables for a specific club
+// router.get('/:clubId/tables', async (req, res) => {
+//   try {
+//     const { clubId } = req.params;
+//     const tables = await Table.findAll({
+//       where: { club_id: clubId },
+//       attributes: ['id', 'table_name', 'price', 'capacity', 'image_url'],
+//     });
+
+//     if (tables.length === 0) {
+//       return res.status(404).json({ error: 'No tables found for this club.' });
+//     }
+
+//     res.json(tables);
+//   } catch (error) {
+//     res.status(500).json({ error: 'Failed to fetch tables for the club.' });
+//   }
+// });
 
 // Get a specific table
 router.get('/:id', async (req, res) => {

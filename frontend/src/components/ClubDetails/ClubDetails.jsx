@@ -552,14 +552,18 @@ const ClubDetails = () => {
         .then((res) => res.json())
         .then((data) => {
           if (Array.isArray(data)) {
-            setTables(data);
+            /*setTables(data);*/
+            setTables(data.map(table => ({
+              ...table,
+              price: Number(table.price) || 0  // Ensure price is always a number
+            })));
           } else {
-            setTables([]); // Fallback to an empty array if response isn't an array
+            setTables([]); 
           }
         })
         .catch((err) => {
           console.error('Error fetching tables:', err);
-          setTables([]); // Ensure tables state remains an array
+          setTables([]); 
         });
     }
   }, [id]);
@@ -988,7 +992,8 @@ const ClubDetails = () => {
                   <input
                     id="price-field"
                     type="text"
-                    value={`$${selectedTable.price.toFixed(2)}`}
+                    //value={`$${selectedTable.price.toFixed(2)}`}
+                    value={`$${Number(selectedTable.price || 0).toFixed(2)}`}
                     readOnly
                   />
                 </div>
