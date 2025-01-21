@@ -492,7 +492,7 @@
 // export default ClubDetails;
 
 //WITHOUT NEED FOR TABLES AND REVIEWS AFTER CREATION
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ReactDatePicker from 'react-datepicker';
@@ -517,6 +517,8 @@ const ClubDetails = () => {
   const [reviewToUpdate, setReviewToUpdate] = useState(null);
   const [reviewToDelete, setReviewToDelete] = useState(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
+  const navigate = useNavigate(); 
+
 
 
   const isFutureFridayOrSaturday = (date) => {
@@ -524,6 +526,25 @@ const ClubDetails = () => {
     const day = date.getDay(); // 5 = Friday, 6 = Saturday
     return (day === 5 || day === 6) && isAfter(date, today);
   };
+
+    // Check authentication status on component mount
+    useEffect(() => {
+      const checkAuth = async () => {
+        try {
+          const response = await fetch('/api/session');  // Assuming this endpoint returns user session info
+          const data = await response.json();
+          
+          if (!data.user) {
+            navigate('/');  // Redirect if not logged in
+          }
+        } catch (error) {
+          console.error('Error checking authentication:', error);
+          navigate('/');  // Redirect in case of error
+        }
+      };
+  
+      checkAuth();
+    }, [navigate]);
 
   useEffect(() => {
     fetch(`/api/clubs/${id}`)

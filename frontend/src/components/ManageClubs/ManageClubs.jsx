@@ -4,6 +4,8 @@ import './ManageClubs.css';
 import DeleteClubModal from '../DeleteClubModal/DeleteClubModal';
 import EditClubModal from '../EditClubModal/EditClubModal';
 import ManageTablesModal from '../ManageTablesModal/ManageTablesModal';
+import { useNavigate } from 'react-router-dom'; 
+
 
 
 const ManageClubs = () => {
@@ -13,7 +15,27 @@ const ManageClubs = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isTableModalOpen, setIsTableModalOpen] = useState(false);
+  const navigate = useNavigate(); 
 
+
+  // Check authentication status on component mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/session');  // Assuming this endpoint returns user session info
+        const data = await response.json();
+        
+        if (!data.user) {
+          navigate('/');  // Redirect if not logged in
+        }
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+        navigate('/');  // Redirect in case of error
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
 
   useEffect(() => {
     fetch('/api/clubs/owned')

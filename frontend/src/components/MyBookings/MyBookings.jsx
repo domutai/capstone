@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { setHours, setMinutes, isAfter } from 'date-fns';
@@ -12,6 +13,27 @@ const MyBookings = () => {
   const [showCancelModal, setShowCancelModal] = useState(false); // State for cancel modal
   const [selectedBookingId, setSelectedBookingId] = useState(null); // Booking to edit/cancel
   const [selectedDate, setSelectedDate] = useState(null); // New date for booking
+  const navigate = useNavigate(); 
+
+
+  // Check authentication status on component mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/session');  // Assuming this endpoint returns user session info
+        const data = await response.json();
+        
+        if (!data.user) {
+          navigate('/');  // Redirect if not logged in
+        }
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+        navigate('/');  // Redirect in case of error
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
 
   // Function to ensure only future Fridays and Saturdays can be selected
   const isFutureFridayOrSaturday = (date) => {
