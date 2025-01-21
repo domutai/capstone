@@ -528,7 +528,11 @@ const ClubDetails = () => {
   useEffect(() => {
     fetch(`/api/clubs/${id}`)
       .then((res) => res.json())
-      .then((data) => setClub(data))
+      //.then((data) => setClub(data))
+      .then((data) => {
+        console.log(data); // Check if the image URL is correct
+        setClub(data);
+      })
       .catch((err) => console.error('Error fetching club details:', err));
   }, [id]);
 
