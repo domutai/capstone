@@ -107,10 +107,10 @@ module.exports = {
         type: Sequelize.TEXT,
       },
       main_image_url: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(500),
       },
       table_map_url: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(500),
       },
       createdAt: {
         type: Sequelize.DATE,

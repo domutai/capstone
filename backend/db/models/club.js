@@ -52,10 +52,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
     },
     main_image_url: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(500),
     },
     table_map_url: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING(500),
     },
   }, {
     sequelize,
