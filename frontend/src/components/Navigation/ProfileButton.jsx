@@ -275,12 +275,16 @@ function ProfileButton({ user }) {
             <li>
               <button onClick={goMyBookings}>My Bookings</button>
             </li>
+            {user.role === 'owner' && (
+              <>
             <li>
               <button onClick={goManageClubs}>Manage Clubs</button>
             </li>
             <li>
               <button onClick={() => setIsCreateModalOpen(true)}>Create Club</button>
             </li>
+            </>
+          )}
             <li>
               <button onClick={logout}>Log Out</button>
             </li>

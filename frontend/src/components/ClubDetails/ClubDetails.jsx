@@ -497,7 +497,7 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { setHours, setMinutes, isAfter } from 'date-fns';
+import { /*setHours, setMinutes,*/ isAfter } from 'date-fns';
 import './ClubDetails.css';
 import UpdateReviewModal from '../UpdateReviewModal/UpdateReviewModal';
 import DeleteReviewModal from '../DeleteReviewModal/DeleteReviewModal';
@@ -986,7 +986,7 @@ const ClubDetails = () => {
                 </div>
 
                 {/* Desired Night Input */}
-                <ReactDatePicker
+                {/* <ReactDatePicker
                   selected={
                     selectedDate || setHours(setMinutes(new Date(), 0), 22) // Default to 10 PM if no date is selected
                   }
@@ -1000,7 +1000,27 @@ const ClubDetails = () => {
                   placeholderText="Click Here"
                   showTimeSelect
                   timeIntervals={15} // Set intervals to every 15 minutes
-                />
+                /> */}
+
+                <div>
+                  <label htmlFor="reservation-date">Reservation:</label>
+                  <ReactDatePicker
+                    id="reservation-date"
+                    selected={
+                      selectedDate 
+                    }
+                    onChange={(date) => setSelectedDate(date)}
+                    filterDate={isFutureFridayOrSaturday} // Allow only future Fridays and Saturdays
+                    filterTime={(time) => {
+                      const hour = time.getHours();
+                      return hour >= 22 || hour < 0; // Allows times from 10 PM to midnight
+                    }}
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    placeholderText="Click Here"
+                    showTimeSelect
+                    timeIntervals={15} // Set intervals to every 15 minutes
+                  />
+                </div>
 
                 {/* Table Image */}
                 {selectedTable.image_url && (

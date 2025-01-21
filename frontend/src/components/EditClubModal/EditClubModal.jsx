@@ -658,6 +658,73 @@
 import { useState, useEffect } from 'react';
 import './EditClubModal.css';
 
+const validCities = [
+  'New York',
+  'Brooklyn',
+  'Harlem',
+  'Flushing',
+  'Queens',
+  'Bronx',
+  'Staten Island',
+  'Long Island City',
+  'Williamsburg',
+  'SoHo',
+  'Upper East Side',
+  'Chelsea',
+  'Greenwich Village',
+  'Astoria',
+  'DUMBO',
+  'Bushwick',
+  'Jersey City',
+  'Hoboken',
+  'Park Slope',
+  'Crown Heights',
+  'Bedford-Stuyvesant',
+  'Tribeca',
+  'Lower East Side',
+  'Midtown Manhattan',
+  'Financial District',
+  'Chinatown',
+  'Little Italy',
+  'East Harlem',
+  'Washington Heights',
+  'Riverdale',
+  'Los Angeles',
+  'Santa Monica',
+  'Venice',
+  'Beverly Hills',
+  'Hollywood',
+  'Malibu',
+  'Pasadena',
+  'Glendale',
+  'Burbank',
+  'Inglewood',
+  'West Hollywood',
+  'Long Beach',
+  'Manhattan Beach',
+  'El Segundo',
+  'Downtown LA',
+  'Silver Lake',
+  'Echo Park',
+  'Culver City',
+  'Brentwood',
+  'Studio City',
+  'Sherman Oaks',
+  'San Pedro',
+  'Torrance',
+  'North Hollywood',
+  'Westwood',
+  'Palos Verdes',
+  'Redondo Beach',
+  'Huntington Beach',
+  'Marina del Rey',
+  'Hermosa Beach',
+  'La Cañada Flintridge',
+  'Bel Air',
+  'Eagle Rock',
+  'Highland Park'
+];
+
 const imageUrlPattern = /\.(png|jpe?g)$/i;
 
 const EditClubModal = ({ club, onClose, onSave }) => {
@@ -712,6 +779,14 @@ const EditClubModal = ({ club, onClose, onSave }) => {
       } else if (formData.name.length > 20) {
         newErrors.name = 'Club name cannot exceed 20 characters.';
       }
+
+    const isValidLocation = validCities.some(city =>
+      formData.location.toLowerCase().includes(city.toLowerCase())
+    );
+  
+    if (!isValidLocation) {
+      newErrors.location = 'Location must be in New York City or Los Angeles.';
+    }
 
       if (!formData.main_image_url.trim() || !imageUrlPattern.test(formData.main_image_url.trim())) {
         newErrors.main_image_url = 'Main image must end in .png, .jpg, or .jpeg.';

@@ -37,7 +37,7 @@ const ReviewModal = ({ onClose, onSubmit }) => {
   return (
     <div className="modal">
       <div className="modal-content">
-        <h2>How was your stay?</h2>
+        <h2>How was this club?</h2>
         {/* Show backend error if present */}
         {backendError && <p className="backend-error">{backendError}</p>}
 

@@ -27,6 +27,8 @@ const ManageClubs = () => {
         
         if (!data.user) {
           navigate('/');  // Redirect if not logged in
+        } else if (data.user.role === 'user') {
+          navigate('/clubs');  // Redirect non-owner users to /clubs
         }
       } catch (error) {
         console.error('Error checking authentication:', error);
@@ -133,7 +135,10 @@ const ManageClubs = () => {
 
       <div className="club-grid">
         {clubs.map((club) => (
-          <div key={club.id} className="club-card">
+          <div key={club.id} className="club-card"
+          onClick={() => navigate(`/club/${club.id}`)}  // Navigate to club details page
+          style={{ cursor: 'pointer' }}  // Change cursor to pointer
+          >
             <img src={club.main_image_url} alt={club.name} className="club-image" />
             <div className="club-details">
               <h2 className="club-name">
