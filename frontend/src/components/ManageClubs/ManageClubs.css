@@ -27,6 +27,10 @@
     background-color: #4CAF50;
     color: white;
   }
+
+  .edit-button:hover {
+    background-color: #28812b;
+  }
   
   .delete-button {
     background-color: #e74c3c;

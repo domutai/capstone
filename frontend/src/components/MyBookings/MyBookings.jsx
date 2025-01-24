@@ -197,6 +197,7 @@ const handleConfirmEdit = async () => {
               <p className="club-price-range">Time: {formatTime(booking.time)}</p>
               <p className="club-price-range">Status: {booking.status}</p>
               <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+              <div className="button-container">
                 <button
                   className="edit-button"
                   onClick={() => handleEditClick(booking.id, `${booking.date}T${booking.time}`)}
@@ -209,6 +210,7 @@ const handleConfirmEdit = async () => {
                 >
                   Cancel
                 </button>
+                </div>
               </div>
             </div>
           </div>

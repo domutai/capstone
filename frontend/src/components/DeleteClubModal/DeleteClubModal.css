@@ -32,38 +32,38 @@
     color: #666;
     margin-bottom: 20px;
   }
-  
-  .delete-modal-buttons {
+
+   .delete-modal-buttons {
     display: flex;
-    justify-content: space-between;
     gap: 10px;
-  }
-  
-  .delete-modal-buttons button {
-    width: 100%;
-    padding: 10px 15px;
+}
+
+.delete-modal-buttons button {
+    flex: 1; 
+    padding: 15px 20px; 
     border: none;
     border-radius: 5px;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-  }
-  
-  .delete-modal-buttons .delete-button {
-    background-color: #ff385c;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.delete-modal-buttons .delete-button {
+    background-color: black;
     color: white;
-  }
-  
-  .delete-modal-buttons .delete-button:hover {
-    background-color: #e63950;
-  }
-  
-  .delete-modal-buttons .cancel-button {
-    background-color: #ccc;
-    color: #333;
-  }
-  
-  .delete-modal-buttons .cancel-button:hover {
-    background-color: #bbb;
-  }
-  
+}
+
+.delete-modal-buttons .delete-button:hover {
+    background-color: grey;
+}
+
+.delete-modal-buttons .cancel-button {
+    background-color: #ffc107;
+    color: white;
+}
+
+.delete-modal-buttons .cancel-button:hover {
+    background-color: gold;
+}
